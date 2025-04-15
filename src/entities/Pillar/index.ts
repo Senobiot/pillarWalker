@@ -2,9 +2,9 @@ import { Graphics } from 'pixi.js';
 import { AppSizeProps } from '../../app/App';
 
 export default class PillarsFabric {
-  defaultX: number = 100;
+  defaultX: number = 60;
   pillarY: number = 300;
-  pillarHeight: number = 300;
+  pillarHeight: number = 170;
   previousPosition: number;
   bridge: Graphics | null = null;
   isDropping: boolean = false;
@@ -20,8 +20,8 @@ export default class PillarsFabric {
     const randomGap =
       minGap + Math.floor(Math.random() * (maxGap - minGap + 1));
 
-    const minWidth = 20;
-    const maxWidth = 100;
+    const minWidth = 50;
+    const maxWidth = 150;
     const randomWidth =
       minWidth + Math.floor(Math.random() * (maxWidth - minWidth + 1));
     const currentX = this.previousPosition
@@ -29,7 +29,7 @@ export default class PillarsFabric {
       : this.defaultX;
 
     const pillar = new Graphics();
-    pillar.beginFill(0x8b4513);
+    pillar.beginFill(0x000000);
     pillar.drawRect(currentX, this.pillarY, randomWidth, this.pillarHeight);
     pillar.endFill();
 
@@ -46,7 +46,7 @@ export default class PillarsFabric {
     const width = 5;
     const initialHeight = 1;
 
-    this.bridge.beginFill(0x8b4513);
+    this.bridge.beginFill(0x000000);
     this.bridge.drawRect(0, 0, width, initialHeight);
     this.bridge.endFill();
 

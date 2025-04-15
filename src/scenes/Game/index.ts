@@ -1,6 +1,7 @@
 import { Container, FederatedPointerEvent, Graphics } from 'pixi.js';
 import { AppSizeProps } from '../../app/App';
 import PillarsFabric from '../../entities/Pillar';
+import Character from '../../entities/Character';
 
 export default class Game extends Container {
   appSize: AppSizeProps;
@@ -12,6 +13,7 @@ export default class Game extends Container {
   pillars: Graphics[];
   bridge: Graphics = new Graphics();
   appStage: any;
+  character: Character | undefined;
 
   constructor(appSize: AppSizeProps, appStage: Container) {
     super();
@@ -26,6 +28,7 @@ export default class Game extends Container {
   start = () => {
     console.log('game started');
     const pillar = this.pillar.create();
+    const pillarPosition = pillar.getBounds();
     this.pillars.push(pillar);
     this.addChild(pillar);
     this.isGameActive = true;
@@ -33,6 +36,11 @@ export default class Game extends Container {
     this.appStage.on('pointerup', this.onPointerUp);
     this.appStage.on('pointerupoutside', this.onPointerUp);
     this.appStage.interactive = true;
+    this.character = new Character();
+    this.character.x = pillarPosition.maxX - 32 * 2;
+    this.character.y = pillarPosition.minY - 32 * 2;
+    console.log(this.character);
+    this.addChild(this.character);
   };
 
   onPointerDown = (event: FederatedPointerEvent) => {
