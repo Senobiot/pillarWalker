@@ -1,35 +1,36 @@
-import { Application, Assets, Container, Graphics } from 'pixi.js';
+import { Application } from 'pixi.js';
 import Game from '../scenes/Game';
 import { getScreenSize } from '../utils';
 import UI from '../scenes/UI';
-import GameOver from '../scenes/Screens/GameOver';
 
-(async () => {
-  // const margins = { x: 25, y: 25 };
-  // const { width, height } = getScreenSize();
+export type AppSizeProps = {
+  width: number;
+  height: number;
+};
+
+export default async () => {
+  const { width, height } = getScreenSize();
   const appSize = {
-    width: 1600,
-    height: 900,
+    width: width < 500 ? width : 500,
+    height: height < 800 ? height : 800,
   };
 
   const app = new Application();
   await app.init(appSize);
 
-  const mapContainer = new Container();
-  const ui = new UI();
-  const gameOverScreen = new GameOver(appSize);
+  const ui = new UI(appSize);
+  const game = new Game(appSize);
 
-  app.stage.addChild(mapContainer);
-  // app.stage.addChild(ui);
-  app.stage.addChild(gameOverScreen);
+  ui.showStartScreen();
+  app.stage.addChild(ui);
 
-  const mask = new Graphics()
-    .rect(0, 0, appSize.width, appSize.height)
-    .fill(0xffffff);
-
-  mapContainer.mask = mask;
-  const game = new Game();
+  ui.startButton.onStart(() => {
+    ui.hideStartScreen();
+    ui.showScore();
+    app.stage.addChild(game);
+    game.start();
+  });
 
   const gameContainer = document.getElementById('pixi-container');
   gameContainer?.appendChild(app.canvas);
-})();
+};
