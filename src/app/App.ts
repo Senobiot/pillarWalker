@@ -1,4 +1,4 @@
-import { Application, Assets, Ticker } from 'pixi.js';
+import { Application, Assets } from 'pixi.js';
 import Game from '../scenes/Game';
 import { getScreenSize } from '../utils';
 import UI from '../scenes/UI';
@@ -30,7 +30,7 @@ export default async () => {
     bgTexture_4,
   ]);
   const ui = new UI(appSize);
-  const game = new Game(appSize);
+  const game = new Game(appSize, app.stage);
 
   ui.showStartScreen();
   app.stage.addChild(bg);
@@ -45,6 +45,12 @@ export default async () => {
 
   app.ticker.add((ticker) => {
     // bg.update(ticker.deltaTime);
+    if (game.isGameActive && game.isHolding) {
+      game.pillar.growBridge(ticker.deltaTime * 0.01);
+    }
+    if (game.pillar.isDropping) {
+      game.pillar.dropBridge(ticker.deltaTime * 0.01);
+    }
   });
 
   const gameContainer = document.getElementById('pixi-container');
