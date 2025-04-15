@@ -1,7 +1,8 @@
-import { Application } from 'pixi.js';
+import { Application, Assets, Ticker } from 'pixi.js';
 import Game from '../scenes/Game';
 import { getScreenSize } from '../utils';
 import UI from '../scenes/UI';
+import Background from '../scenes/Background';
 
 export type AppSizeProps = {
   width: number;
@@ -17,11 +18,22 @@ export default async () => {
 
   const app = new Application();
   await app.init(appSize);
+  const bgTexture_1 = await Assets.load('/_11_background.png');
+  const bgTexture_2 = await Assets.load('/_08_clouds.png');
+  const bgTexture_3 = await Assets.load('/_05_hill1.png');
+  const bgTexture_4 = await Assets.load('/_02_trees and bushes.png');
 
+  const bg = new Background(appSize, [
+    bgTexture_1,
+    bgTexture_2,
+    bgTexture_3,
+    bgTexture_4,
+  ]);
   const ui = new UI(appSize);
   const game = new Game(appSize);
 
   ui.showStartScreen();
+  app.stage.addChild(bg);
   app.stage.addChild(ui);
 
   ui.startButton.onStart(() => {
@@ -29,6 +41,10 @@ export default async () => {
     ui.showScore();
     app.stage.addChild(game);
     game.start();
+  });
+
+  app.ticker.add((ticker) => {
+    // bg.update(ticker.deltaTime);
   });
 
   const gameContainer = document.getElementById('pixi-container');
