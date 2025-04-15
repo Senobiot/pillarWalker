@@ -14,6 +14,8 @@ export default class Game extends Container {
   bridge: Graphics = new Graphics();
   appStage: any;
   character: Character | undefined;
+  characterMoving: boolean = false;
+  finishWalking: any;
 
   constructor(appSize: AppSizeProps, appStage: Container) {
     super();
@@ -39,8 +41,36 @@ export default class Game extends Container {
     this.character = new Character();
     this.character.x = pillarPosition.maxX - 32 * 2;
     this.character.y = pillarPosition.minY - 32 * 2;
-    console.log(this.character);
+    const nextPillar = this.pillar.create();
+    this.addChild(nextPillar);
+    this.pillars.push(nextPillar);
     this.addChild(this.character);
+  };
+
+  update = (deltaTime: number) => {
+    if (this.isGameActive && this.isHolding) {
+      this.pillar.growBridge(deltaTime * 0.01);
+    }
+    if (this.pillar.isDropping) {
+      this.pillar.dropBridge(deltaTime * 0.01);
+    }
+
+    if (this.pillar.isDropped && !this.finishWalking) {
+      if (this.character?.x < this.pillar.previousPosition) {
+        this.characterMoving = true;
+        if (!this.character?.playing) {
+          this.character?.play();
+        }
+        this.character?.move(deltaTime);
+      } else {
+        this.finishWalking = true;
+        this.characterMoving = false;
+        const nextPillar = this.pillar.create();
+        this.addChild(nextPillar);
+        this.pillars.push(nextPillar);
+        this.character?.stop();
+      }
+    }
   };
 
   onPointerDown = (event: FederatedPointerEvent) => {

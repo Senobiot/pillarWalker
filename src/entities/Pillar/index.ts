@@ -6,8 +6,10 @@ export default class PillarsFabric {
   pillarY: number = 300;
   pillarHeight: number = 170;
   previousPosition: number;
+  bridgePosition: number = 0;
   bridge: Graphics | null = null;
   isDropping: boolean = false;
+  isDropped: boolean = false;
 
   constructor(appSize: AppSizeProps) {
     this.previousPosition = 0;
@@ -33,13 +35,14 @@ export default class PillarsFabric {
     pillar.drawRect(currentX, this.pillarY, randomWidth, this.pillarHeight);
     pillar.endFill();
 
+    this.bridgePosition = this.previousPosition;
     this.previousPosition = currentX + randomWidth;
 
     return pillar;
   }
 
   createBridge(
-    x: number = this.previousPosition,
+    x: number = this.bridgePosition,
     y: number = this.pillarY
   ): Graphics {
     this.bridge = new Graphics();
@@ -68,7 +71,11 @@ export default class PillarsFabric {
         if (this.bridge.rotation >= Math.PI / 2) {
           this.isDropping = false;
           this.bridge.rotation = Math.PI / 2;
+          this.isDropped = true;
         }
+      } else {
+        console.log(this.isDropped);
+        this.isDropped = true;
       }
     }
   }
