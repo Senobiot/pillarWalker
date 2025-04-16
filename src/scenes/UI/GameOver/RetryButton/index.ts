@@ -25,6 +25,20 @@ export default class RetryButton extends Container {
 
     this.interactive = true;
     this.cursor = 'pointer';
+
+    this.on('mouseover', () => {
+      this.button
+        .roundRect(-100, -35, 200, 70, 8)
+        .fill(COLORS.darkGreen)
+        .stroke({ width: 4, color: '#004620' });
+    });
+
+    this.on('mouseout', () => {
+      this.button
+        .roundRect(-100, -35, 200, 70, 8)
+        .fill(COLORS.forestGreen)
+        .stroke({ width: 8, color: '#004620' });
+    });
   };
 
   onRetry = (callback: CallableFunction) => {

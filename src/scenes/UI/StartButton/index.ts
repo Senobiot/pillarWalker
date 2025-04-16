@@ -29,6 +29,20 @@ export default class StartButton extends Container {
 
     this.addChild(this.button);
     this.addChild(this.buttonText);
+
+    this.button.on('mouseover', () => {
+      this.button
+        .circle(width / 2, height / 2, 80)
+        .fill(COLORS.darkGreen)
+        .stroke({ width: 4, color: '#004620' });
+    });
+
+    this.button.on('mouseout', () => {
+      this.button
+        .circle(width / 2, height / 2, 80)
+        .fill(COLORS.forestGreen)
+        .stroke({ width: 8, color: '#004620' });
+    });
   };
 
   onStart = (callback: CallableFunction) => {

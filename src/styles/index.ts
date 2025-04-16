@@ -1,5 +1,28 @@
 import { TextStyle } from 'pixi.js';
 
+export const italianoStyle = new TextStyle({
+  fontFamily: 'Arial',
+  fontSize: 40,
+  fontStyle: 'italic',
+  fontWeight: 'bold',
+  fill: '#ffffff',
+  stroke: '#4a1850',
+  dropShadow: true,
+  wordWrap: true,
+  wordWrapWidth: 440,
+  align: 'center',
+});
+
+export const regularStyle = new TextStyle({
+  fontFamily: 'Arial',
+  fontSize: 40,
+  fontWeight: 'bold',
+  fill: '#ffffff',
+  stroke: '#4a1850',
+  dropShadow: true,
+  align: 'center',
+});
+
 export const skewStyle = new TextStyle({
   fontFamily: 'Arial',
   dropShadow: {

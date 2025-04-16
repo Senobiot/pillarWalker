@@ -1,19 +1,28 @@
-import { BitmapText } from 'pixi.js';
+import { Text } from 'pixi.js';
 import { AppSizeProps } from '../../../app/App';
+import { regularStyle } from '../../../styles';
 
-export default class Score extends BitmapText {
+export default class Score extends Text {
   currentScore: number = 0;
+
   constructor(appSize: AppSizeProps) {
-    super('Score 0', {
-      fontSize: 50,
-      align: 'center',
-      fill: '#ff0000',
-    });
+    super(
+      new Text({
+        text: 'Score: 0',
+        style: regularStyle,
+      })
+    );
 
     this.x = appSize.width / 2;
     this.y = 50;
     this.currentScore;
+    this.anchor.set(0.5, 0.5);
   }
-  setScore = (score: number) => (this.text = `Score: ${score}`);
+  setScore = (score: number) => {
+    console.log(score);
+    this.text = `Score: ${score}`;
+    this.style = regularStyle;
+  };
+
   increaseScore = () => (this.text = `Score: ${++this.currentScore}`);
 }

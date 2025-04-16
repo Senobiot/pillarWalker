@@ -1,19 +1,7 @@
-import { Text, Container, TextStyle } from 'pixi.js';
+import { Text, Container } from 'pixi.js';
 import { AppSizeProps } from '../../../app/App';
 import RetryButton from './RetryButton';
-
-const style = new TextStyle({
-  fontFamily: 'Arial',
-  fontSize: 40,
-  fontStyle: 'italic',
-  fontWeight: 'bold',
-  fill: '#ffffff',
-  stroke: '#4a1850',
-  dropShadow: true,
-  wordWrap: true,
-  wordWrapWidth: 440,
-  align: 'center',
-});
+import { italianoStyle } from '../../../styles';
 
 export default class GameOver extends Container {
   retryButton: RetryButton;
@@ -41,6 +29,6 @@ export default class GameOver extends Container {
   setScore = (score: number) => {
     console.log(score);
     this.text.text = `GAME OVER \nScore: ${score}`;
-    this.text.style = style;
+    this.text.style = italianoStyle;
   };
 }
