@@ -18,7 +18,8 @@ export default class Score extends Text {
     this.currentScore;
     this.anchor.set(0.5, 0.5);
   }
-  setScore = (score: number) => {
+  setScore = (score: number = 0) => {
+    this.currentScore = score;
     console.log(score);
     this.text = `Score: ${score}`;
     this.style = regularStyle;

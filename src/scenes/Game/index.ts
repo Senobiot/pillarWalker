@@ -11,6 +11,7 @@ export enum GameState {
   PAUSED = 'paused',
   MENU = 'menu',
   OVER = 'over',
+  STARTING = 'starting',
 }
 
 enum TouchScren {
@@ -37,6 +38,7 @@ export default class Game extends Container {
   touchTimeoutId: number | null;
   holdTimeoutId: number | null = null;
   score: number = 0;
+  initialX: number;
 
   constructor(appSize: AppSizeProps, appStage: Container) {
     super();
@@ -45,27 +47,51 @@ export default class Game extends Container {
     this.appSize = appSize;
     this.pillar = new PillarsFabric(this.appSize);
     this.pillars = [];
+    this.initialX = appSize.width / 2 - 50;
     this.isHolding = false;
     this.appStage = appStage;
     this.touchTimeoutId = null;
+    this.init();
   }
 
-  start = () => {
-    console.log('game started');
+  init = () => {
+    console.log('game init');
+    this.state = GameState.MENU;
     const pillarPosition = this.addPillar();
+    this.character = new Character();
+    this.character.x = pillarPosition.maxX - 32;
+    this.character.y = pillarPosition.minY;
+    this.addChild(this.character);
+  };
+
+  start = (restart: boolean = false) => {
+    if (restart) {
+      console.log(`restart ${restart}`);
+      this.pillars.forEach((e) => e.destroy);
+      this.pillars = [];
+      this.children.forEach((child) => {
+        child.destroy();
+      });
+      this.removeChildren();
+
+      console.log(this.children);
+      this.pillar = new PillarsFabric(this.appSize);
+      const pillarPosition = this.addPillar();
+      this.character = new Character();
+      this.character.x = pillarPosition.maxX - 32;
+      this.character.y = pillarPosition.minY;
+
+      this.addChild(this.character);
+    }
+
+    console.log('game started');
+    this.addPillar();
 
     this.state = GameState.ACTIVE;
     this.appStage.on('pointerdown', this.onPointerDown);
     this.appStage.on('pointerup', this.onPointerUp);
     this.appStage.on('pointerupoutside', this.onPointerUp);
     this.appStage.interactive = true;
-
-    this.character = new Character();
-    this.character.x = pillarPosition.maxX - 32;
-    this.character.y = pillarPosition.minY;
-
-    this.addPillar();
-    this.addChild(this.character);
   };
 
   update = (deltaTime: number) => {
@@ -152,6 +178,7 @@ export default class Game extends Container {
     const pillar = this.pillar.create();
     this.addChild(pillar);
     this.pillars.push(pillar);
+
     return pillar.getBounds();
   };
 

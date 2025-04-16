@@ -16,6 +16,11 @@ export default class UI extends Container {
     this.gameOver = new GameOver(appSize);
   }
 
+  reset = () => {
+    this.score.currentScore = 0;
+    this.score.setScore();
+  };
+
   showStartScreen = () => {
     this.addChild(this.startButton);
   };
@@ -32,5 +37,9 @@ export default class UI extends Container {
 
   hideStartScreen = () => {
     this.removeChild(this.startButton);
+  };
+
+  hideGameOverScreen = () => {
+    this.removeChild(this.gameOver);
   };
 }

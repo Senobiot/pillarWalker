@@ -9,7 +9,7 @@ export default class StartButton extends Container {
   constructor(appSize: AppSizeProps) {
     super();
     this.button = new Graphics();
-    this.buttonText = new Text({ text: 'RETRY', style: skewStyle });
+    this.buttonText = new Text({ text: 'START', style: skewStyle });
     this.init(appSize);
   }
 

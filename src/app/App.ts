@@ -32,29 +32,34 @@ export default async () => {
   ]);
   const ui = new UI(appSize);
   const game = new Game(appSize, app.stage);
+  game.y = 100;
+  game.x = game.initialX;
 
   const gameMask = new Graphics();
-  gameMask.beginFill(0xffffff);
-  gameMask.drawRect(0, 0, appSize.width, appSize.height);
-  gameMask.endFill();
+  gameMask.fill(0xffffff);
+  gameMask.rect(0, 0, appSize.width, appSize.height);
+  gameMask.fill();
 
   game.mask = gameMask;
   app.stage.addChild(gameMask);
 
   ui.showStartScreen();
   app.stage.addChild(bg);
+  app.stage.addChild(game);
   app.stage.addChild(ui);
 
   ui.startButton.onStart(() => {
     ui.hideStartScreen();
     ui.showScore();
-    app.stage.addChild(game);
-    game.start();
+    game.state = GameState.STARTING;
   });
 
   ui.gameOver.retryButton.onRetry(() => {
+    game.x = 0;
+    ui.reset();
     ui.showScore();
-    game.start();
+    ui.hideGameOverScreen();
+    game.start(true);
   });
 
   app.ticker.add((ticker) => {
@@ -79,6 +84,21 @@ export default async () => {
     }
     if (game.state === GameState.OVER) {
       ui.showGameOver();
+    }
+
+    if (game.state === GameState.STARTING) {
+      if (game.y > 0 || game.x > 0) {
+        const speed = 1;
+        if (game.x > 0) {
+          game.x -= speed * 2;
+        }
+        if (game.y > 0) {
+          game.y -= speed;
+        }
+      } else {
+        game.state = GameState.ACTIVE;
+        game.start();
+      }
     }
   });
 

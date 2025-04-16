@@ -17,7 +17,7 @@ export enum BridgeOutfits {
 
 export default class PillarsFabric {
   bridgeState: BridgeState | undefined;
-  defaultX: number = 60;
+  defaultX: number = 0;
   pillarY: number = 300;
   pillarHeight: number = 170;
   currMaxX: number = 0;
@@ -45,9 +45,9 @@ export default class PillarsFabric {
     const currentX = this.currMaxX ? this.currMaxX + randomGap : this.defaultX;
 
     const pillar = new Graphics();
-    pillar.beginFill(0x000000);
-    pillar.drawRect(currentX, this.pillarY, randomWidth, this.pillarHeight);
-    pillar.endFill();
+    pillar.fill(0x000000);
+    pillar.rect(currentX, this.pillarY, randomWidth, this.pillarHeight);
+    pillar.fill();
 
     this.bridgePosition = this.currMaxX;
     this.bridgeState = BridgeState.CREATING;
@@ -65,9 +65,9 @@ export default class PillarsFabric {
     const width = 5;
     const initialHeight = 1;
 
-    this.bridge.beginFill(0x000000);
-    this.bridge.drawRect(0, 0, width, initialHeight);
-    this.bridge.endFill();
+    this.bridge.fill(0x000000);
+    this.bridge.rect(0, 0, width, initialHeight);
+    this.bridge.fill();
 
     this.bridge.x = x - width;
     this.bridge.y = y;
