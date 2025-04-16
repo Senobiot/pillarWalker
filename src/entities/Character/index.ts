@@ -1,6 +1,13 @@
 import { Assets, AnimatedSprite, Texture, Rectangle } from 'pixi.js';
 
+export enum CharacterState {
+  STAY = 'stay',
+  MOVING = 'moving',
+  FALLING = 'falling',
+}
+
 export default class Character extends AnimatedSprite {
+  state: CharacterState | undefined;
   distance: number = 0;
   targetDistance: number = 200;
   speed: number = 3;
@@ -31,12 +38,11 @@ export default class Character extends AnimatedSprite {
     this.animationSpeed = 0.15;
     this.scale.set(2, 2);
     this.loop = true;
+    this.state = CharacterState.STAY;
   }
 
   move(deltaTime: number) {
-    if (this.distance < this.targetDistance) {
-      this.x += this.speed * deltaTime;
-      this.distance += this.speed * deltaTime;
-    }
+    this.x += this.speed * deltaTime;
+    this.distance += this.speed * deltaTime;
   }
 }

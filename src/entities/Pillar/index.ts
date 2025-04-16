@@ -1,18 +1,24 @@
 import { Graphics } from 'pixi.js';
 import { AppSizeProps } from '../../app/App';
 
+export enum BridgeState {
+  ROTATING = 'rotating',
+  DROPPED = 'dropped',
+  CROSSED = 'crossed',
+}
+
 export default class PillarsFabric {
+  bridgeState: BridgeState | undefined;
   defaultX: number = 60;
   pillarY: number = 300;
   pillarHeight: number = 170;
-  previousPosition: number;
-  bridgePosition: number = 0;
+  prevPosition: number = 0;
+  currPosition: number = 0;
   bridge: Graphics | null = null;
-  isDropping: boolean = false;
-  isDropped: boolean = false;
+  endOfbridge: number = 0;
+  bridgePosition: number = 0;
 
   constructor(appSize: AppSizeProps) {
-    this.previousPosition = 0;
     this.pillarY = appSize?.height - this.pillarHeight;
   }
 
@@ -26,8 +32,9 @@ export default class PillarsFabric {
     const maxWidth = 150;
     const randomWidth =
       minWidth + Math.floor(Math.random() * (maxWidth - minWidth + 1));
-    const currentX = this.previousPosition
-      ? this.previousPosition + randomGap
+
+    const currentX = this.prevPosition
+      ? this.prevPosition + randomGap
       : this.defaultX;
 
     const pillar = new Graphics();
@@ -35,8 +42,8 @@ export default class PillarsFabric {
     pillar.drawRect(currentX, this.pillarY, randomWidth, this.pillarHeight);
     pillar.endFill();
 
-    this.bridgePosition = this.previousPosition;
-    this.previousPosition = currentX + randomWidth;
+    this.bridgePosition = this.prevPosition;
+    this.prevPosition = currentX + randomWidth;
 
     return pillar;
   }
@@ -69,13 +76,10 @@ export default class PillarsFabric {
       if (this.bridge.rotation < Math.PI / 2) {
         this.bridge.rotation += delta * 2;
         if (this.bridge.rotation >= Math.PI / 2) {
-          this.isDropping = false;
+          this.bridgeState = BridgeState.DROPPED;
           this.bridge.rotation = Math.PI / 2;
-          this.isDropped = true;
+          this.endOfbridge = this.bridge.getBounds().maxX;
         }
-      } else {
-        console.log(this.isDropped);
-        this.isDropped = true;
       }
     }
   }
