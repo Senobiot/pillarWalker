@@ -3,6 +3,7 @@ import { Assets, AnimatedSprite, Texture, Rectangle } from 'pixi.js';
 export enum CharacterState {
   STAY = 'stay',
   MOVING = 'moving',
+  CROSSED = 'success',
   FALLING = 'falling',
 }
 

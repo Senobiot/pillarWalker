@@ -1,9 +1,12 @@
 import { Container, Graphics } from 'pixi.js';
 import { AppSizeProps } from '../../app/App';
-import PillarsFabric, { BridgeState } from '../../entities/Pillar';
+import PillarsFabric, {
+  BridgeOutfits,
+  BridgeState,
+} from '../../entities/Pillar';
 import Character, { CharacterState } from '../../entities/Character';
 
-enum GameState {
+export enum GameState {
   ACTIVE = 'active',
   PAUSED = 'paused',
   MENU = 'menu',
@@ -17,7 +20,7 @@ enum TouchScren {
 }
 
 export default class Game extends Container {
-  gameState: GameState;
+  state: GameState;
   touchScreen: TouchScren | undefined;
   appSize: AppSizeProps;
   pillar: PillarsFabric;
@@ -28,26 +31,27 @@ export default class Game extends Container {
   bridge: Graphics = new Graphics();
   appStage: any;
   character: Character | undefined;
+  characterGap: number = 50;
   characterMoving: boolean = false;
+  touchTimeoutId: number | null;
 
   constructor(appSize: AppSizeProps, appStage: Container) {
     super();
-    this.gameState = GameState.MENU;
+    this.state = GameState.MENU;
     this.touchScreen;
     this.appSize = appSize;
     this.pillar = new PillarsFabric(this.appSize);
     this.pillars = [];
     this.isHolding = false;
     this.appStage = appStage;
+    this.touchTimeoutId = null;
   }
 
   start = () => {
     console.log('game started');
-    const pillar = this.pillar.create();
-    const pillarPosition = pillar.getBounds();
-    this.pillars.push(pillar);
-    this.addChild(pillar);
-    this.gameState = GameState.ACTIVE;
+    const pillarPosition = this.addPillar();
+
+    this.state = GameState.ACTIVE;
     this.appStage.on('pointerdown', this.onPointerDown);
     this.appStage.on('pointerup', this.onPointerUp);
     this.appStage.on('pointerupoutside', this.onPointerUp);
@@ -57,16 +61,17 @@ export default class Game extends Container {
     this.character.x = pillarPosition.maxX - 32 * 2;
     this.character.y = pillarPosition.minY - 32 * 2;
 
-    const nextPillar = this.pillar.create();
-    this.addChild(nextPillar);
-    this.pillars.push(nextPillar);
+    this.addPillar();
     this.addChild(this.character);
   };
 
   update = (deltaTime: number) => {
-    if (this.gameState !== GameState.ACTIVE) return;
+    if (this.state !== GameState.ACTIVE) return;
 
-    if (this.touchScreen === TouchScren.HOLDING) {
+    if (
+      this.touchScreen === TouchScren.HOLDING &&
+      this.pillar.bridgeState === BridgeState.GROWING
+    ) {
       return this.pillar.growBridge(deltaTime * 0.01);
     }
     if (this.pillar.bridgeState !== BridgeState.DROPPED) {
@@ -75,35 +80,65 @@ export default class Game extends Container {
 
     if (!this.character) return;
 
-    if (
-      this.pillar.bridgeState === BridgeState.DROPPED &&
-      this.character.x < this.pillar.endOfbridge
-    ) {
+    if (this.pillar.bridgeState === BridgeState.DROPPED) {
       if (!this.character.playing) {
-        this.character.state === CharacterState.MOVING;
         this.character.play();
       }
-      this.character.move(deltaTime);
-    } else {
-      this.pillar.bridgeState = BridgeState.CROSSED;
-      this.character.state === CharacterState.STAY;
-      const nextPillar = this.pillar.create();
-      this.addChild(nextPillar);
-      this.pillars.push(nextPillar);
-      this.character.stop(); // animation
+      this.character.state = CharacterState.MOVING;
+      if (this.pillar.bridgeOutFits === BridgeOutfits.EXACT) {
+        if (
+          this.character.x <
+          this.pillar.currMaxX - this.character.width / 1.5
+        ) {
+          return this.character.move(deltaTime);
+        } else {
+          this.pillar.bridgeState = BridgeState.CROSSED;
+          this.character.state = CharacterState.CROSSED;
+          this.character.stop(); // animation
+          this.addPillar();
+        }
+      }
+      if (this.pillar.bridgeOutFits === BridgeOutfits.LESSER) {
+        if (
+          this.character.x <
+          this.pillar.endOfbridge - this.character.width / 1.5
+        ) {
+          return this.character.move(deltaTime);
+        } else {
+          this.character.state = CharacterState.STAY;
+          console.log('упал с мостом');
+        }
+      }
+
+      if (this.pillar.bridgeOutFits === BridgeOutfits.LARGER) {
+        if (this.character.x < this.pillar.endOfbridge) {
+          return this.character.move(deltaTime);
+        } else {
+          this.character.state = CharacterState.STAY;
+          console.log('упал с моста');
+        }
+      }
     }
   };
 
+  addPillar = () => {
+    const pillar = this.pillar.create();
+    this.addChild(pillar);
+    this.pillars.push(pillar);
+    return pillar.getBounds();
+  };
+
   onPointerDown = () => {
-    if (this.gameState !== GameState.ACTIVE) return;
+    if (this.state !== GameState.ACTIVE) return;
 
     this.holdStartTime = Date.now();
     this.touchScreen = TouchScren.HOLDING;
-
+    console.log(this.pillar.bridgeState);
     setTimeout(() => {
       if (this.touchScreen === TouchScren.HOLDING) {
         this.bridge = this.pillar.createBridge();
         this.addChild(this.bridge);
+        this.pillar.bridgeState = BridgeState.GROWING;
       }
     }, this.minHoldTime);
   };

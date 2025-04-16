@@ -1,8 +1,9 @@
-import { Application, Assets } from 'pixi.js';
-import Game from '../scenes/Game';
+import { Application, Assets, Graphics } from 'pixi.js';
+import Game, { GameState } from '../scenes/Game';
 import { getScreenSize } from '../utils';
 import UI from '../scenes/UI';
 import Background from '../scenes/Background';
+import { CharacterState } from '../entities/Character';
 
 export type AppSizeProps = {
   width: number;
@@ -32,6 +33,14 @@ export default async () => {
   const ui = new UI(appSize);
   const game = new Game(appSize, app.stage);
 
+  const gameMask = new Graphics();
+  gameMask.beginFill(0xffffff);
+  gameMask.drawRect(0, 0, appSize.width, appSize.height);
+  gameMask.endFill();
+
+  game.mask = gameMask;
+  app.stage.addChild(gameMask);
+
   ui.showStartScreen();
   app.stage.addChild(bg);
   app.stage.addChild(ui);
@@ -44,9 +53,24 @@ export default async () => {
   });
 
   app.ticker.add((ticker) => {
-    game.update(ticker.deltaTime);
-    if (game.characterMoving) {
-      bg.update(ticker.deltaTime);
+    if (game.state === GameState.ACTIVE) {
+      game.update(ticker.deltaTime);
+
+      if (!game.character) return;
+
+      if (game.character.state === CharacterState.MOVING) {
+        bg.update(ticker.deltaTime);
+      }
+
+      if (game.character.state === CharacterState.CROSSED) {
+        if (game.character.getGlobalPosition().x > game.characterGap) {
+          const speed = 5;
+          game.x -= speed;
+        } else {
+          ui.score.increaseScore();
+          game.character.state = CharacterState.STAY;
+        }
+      }
     }
   });
 

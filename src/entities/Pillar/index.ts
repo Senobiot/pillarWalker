@@ -5,6 +5,13 @@ export enum BridgeState {
   ROTATING = 'rotating',
   DROPPED = 'dropped',
   CROSSED = 'crossed',
+  GROWING = 'growing',
+}
+
+export enum BridgeOutfits {
+  LESSER = 'less',
+  LARGER = 'larger',
+  EXACT = 'exact',
 }
 
 export default class PillarsFabric {
@@ -12,19 +19,20 @@ export default class PillarsFabric {
   defaultX: number = 60;
   pillarY: number = 300;
   pillarHeight: number = 170;
-  prevPosition: number = 0;
-  currPosition: number = 0;
+  currMaxX: number = 0;
   bridge: Graphics | null = null;
   endOfbridge: number = 0;
   bridgePosition: number = 0;
+  currMinX: number = 0;
+  bridgeOutFits: BridgeOutfits | undefined;
 
   constructor(appSize: AppSizeProps) {
     this.pillarY = appSize?.height - this.pillarHeight;
   }
 
   create(): Graphics {
-    const minGap = 50;
-    const maxGap = 150;
+    const minGap = 100;
+    const maxGap = 250;
     const randomGap =
       minGap + Math.floor(Math.random() * (maxGap - minGap + 1));
 
@@ -33,17 +41,16 @@ export default class PillarsFabric {
     const randomWidth =
       minWidth + Math.floor(Math.random() * (maxWidth - minWidth + 1));
 
-    const currentX = this.prevPosition
-      ? this.prevPosition + randomGap
-      : this.defaultX;
+    const currentX = this.currMaxX ? this.currMaxX + randomGap : this.defaultX;
 
     const pillar = new Graphics();
     pillar.beginFill(0x000000);
     pillar.drawRect(currentX, this.pillarY, randomWidth, this.pillarHeight);
     pillar.endFill();
 
-    this.bridgePosition = this.prevPosition;
-    this.prevPosition = currentX + randomWidth;
+    this.bridgePosition = this.currMaxX;
+    this.currMaxX = currentX + randomWidth;
+    this.currMinX = currentX;
 
     return pillar;
   }
@@ -62,7 +69,7 @@ export default class PillarsFabric {
 
     this.bridge.x = x - width;
     this.bridge.y = y;
-
+    console.log(this.bridge);
     return this.bridge;
   }
 
@@ -78,7 +85,13 @@ export default class PillarsFabric {
         if (this.bridge.rotation >= Math.PI / 2) {
           this.bridgeState = BridgeState.DROPPED;
           this.bridge.rotation = Math.PI / 2;
-          this.endOfbridge = this.bridge.getBounds().maxX;
+          this.endOfbridge = this.bridge.height + this.bridge.x;
+          this.bridgeOutFits =
+            this.endOfbridge > this.currMaxX
+              ? BridgeOutfits.LARGER
+              : this.endOfbridge < this.currMinX
+              ? BridgeOutfits.LESSER
+              : BridgeOutfits.EXACT;
         }
       }
     }
