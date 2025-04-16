@@ -52,6 +52,11 @@ export default async () => {
     game.start();
   });
 
+  ui.gameOver.retryButton.onRetry(() => {
+    ui.showScore();
+    game.start();
+  });
+
   app.ticker.add((ticker) => {
     if (game.state === GameState.ACTIVE) {
       game.update(ticker.deltaTime);
@@ -71,6 +76,9 @@ export default async () => {
           game.character.state = CharacterState.STAY;
         }
       }
+    }
+    if (game.state === GameState.OVER) {
+      ui.showGameOver();
     }
   });
 

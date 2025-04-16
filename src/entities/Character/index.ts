@@ -40,10 +40,20 @@ export default class Character extends AnimatedSprite {
     this.scale.set(2, 2);
     this.loop = true;
     this.state = CharacterState.STAY;
+    this.anchor.set(0.5, 1);
   }
 
   move(deltaTime: number) {
     this.x += this.speed * deltaTime;
-    this.distance += this.speed * deltaTime;
+    // this.distance += this.speed * deltaTime;
   }
+
+  falling(deltaTime: number) {
+    this.y += this.speed * deltaTime;
+  }
+
+  flip = () => {
+    console.log('filp');
+    this.scale.y = -this.scale.y;
+  };
 }

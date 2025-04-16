@@ -6,6 +6,7 @@ export enum BridgeState {
   DROPPED = 'dropped',
   CROSSED = 'crossed',
   GROWING = 'growing',
+  CREATING = 'creating',
 }
 
 export enum BridgeOutfits {
@@ -49,6 +50,7 @@ export default class PillarsFabric {
     pillar.endFill();
 
     this.bridgePosition = this.currMaxX;
+    this.bridgeState = BridgeState.CREATING;
     this.currMaxX = currentX + randomWidth;
     this.currMinX = currentX;
 
@@ -69,19 +71,21 @@ export default class PillarsFabric {
 
     this.bridge.x = x - width;
     this.bridge.y = y;
-    console.log(this.bridge);
+    console.log('bridge Creating');
     return this.bridge;
   }
 
   growBridge(delta: number) {
     if (this.bridge) {
       this.bridge.scale.y -= delta * 300;
+      console.log('bridge GROW');
     }
   }
   dropBridge(delta: number) {
     if (this.bridge) {
       if (this.bridge.rotation < Math.PI / 2) {
         this.bridge.rotation += delta * 2;
+        console.log('bridge Rotating');
         if (this.bridge.rotation >= Math.PI / 2) {
           this.bridgeState = BridgeState.DROPPED;
           this.bridge.rotation = Math.PI / 2;

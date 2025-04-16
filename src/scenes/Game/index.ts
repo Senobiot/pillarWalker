@@ -26,14 +26,17 @@ export default class Game extends Container {
   pillar: PillarsFabric;
   isHolding: boolean;
   holdStartTime: number = 0;
-  minHoldTime: number = 100;
+  minHoldTime: number = 200;
   pillars: Graphics[];
   bridge: Graphics = new Graphics();
   appStage: any;
   character: Character | undefined;
   characterGap: number = 50;
+  characterFlip: boolean = false;
   characterMoving: boolean = false;
   touchTimeoutId: number | null;
+  holdTimeoutId: number | null = null;
+  score: number = 0;
 
   constructor(appSize: AppSizeProps, appStage: Container) {
     super();
@@ -58,33 +61,46 @@ export default class Game extends Container {
     this.appStage.interactive = true;
 
     this.character = new Character();
-    this.character.x = pillarPosition.maxX - 32 * 2;
-    this.character.y = pillarPosition.minY - 32 * 2;
+    this.character.x = pillarPosition.maxX - 32;
+    this.character.y = pillarPosition.minY;
 
     this.addPillar();
     this.addChild(this.character);
   };
 
   update = (deltaTime: number) => {
-    if (this.state !== GameState.ACTIVE) return;
+    if (this.state !== GameState.ACTIVE || !this.character) return;
 
     if (
       this.touchScreen === TouchScren.HOLDING &&
-      this.pillar.bridgeState === BridgeState.GROWING
+      this.pillar.bridgeState === BridgeState.GROWING &&
+      this.character.state !== CharacterState.MOVING
     ) {
       return this.pillar.growBridge(deltaTime * 0.01);
     }
-    if (this.pillar.bridgeState !== BridgeState.DROPPED) {
+    if (
+      this.pillar.bridgeState !== BridgeState.DROPPED &&
+      this.character.state !== CharacterState.MOVING
+    ) {
       return this.pillar.dropBridge(deltaTime * 0.01);
     }
 
-    if (!this.character) return;
-
-    if (this.pillar.bridgeState === BridgeState.DROPPED) {
+    if (
+      this.pillar.bridgeState === BridgeState.DROPPED &&
+      this.character.state !== CharacterState.FALLING
+    ) {
       if (!this.character.playing) {
         this.character.play();
+        this.character.state = CharacterState.MOVING;
       }
-      this.character.state = CharacterState.MOVING;
+
+      if (this.characterFlip) {
+        if (this.checkCollision()) {
+          console.log('Врезался');
+          return (this.character.state = CharacterState.FALLING);
+        }
+      }
+
       if (this.pillar.bridgeOutFits === BridgeOutfits.EXACT) {
         if (
           this.character.x <
@@ -99,14 +115,11 @@ export default class Game extends Container {
         }
       }
       if (this.pillar.bridgeOutFits === BridgeOutfits.LESSER) {
-        if (
-          this.character.x <
-          this.pillar.endOfbridge - this.character.width / 1.5
-        ) {
+        if (this.character.x < this.pillar.endOfbridge) {
           return this.character.move(deltaTime);
         } else {
-          this.character.state = CharacterState.STAY;
           console.log('упал с мостом');
+          return (this.character.state = CharacterState.FALLING);
         }
       }
 
@@ -114,11 +127,25 @@ export default class Game extends Container {
         if (this.character.x < this.pillar.endOfbridge) {
           return this.character.move(deltaTime);
         } else {
-          this.character.state = CharacterState.STAY;
           console.log('упал с моста');
+          return (this.character.state = CharacterState.FALLING);
         }
       }
     }
+
+    if (this.character.state === CharacterState.FALLING) {
+      if (this.character.y - this.character.height > this.appSize.height) {
+        this.state = GameState.OVER;
+        return this.character.destroy();
+      }
+      this.character.falling(deltaTime);
+    }
+  };
+
+  checkCollision = () => {
+    if (!this.character) return;
+
+    return this.character.x + this.character.width - 40 > this.pillar.currMinX;
   };
 
   addPillar = () => {
@@ -132,10 +159,15 @@ export default class Game extends Container {
     if (this.state !== GameState.ACTIVE) return;
 
     this.holdStartTime = Date.now();
-    this.touchScreen = TouchScren.HOLDING;
-    console.log(this.pillar.bridgeState);
-    setTimeout(() => {
-      if (this.touchScreen === TouchScren.HOLDING) {
+    this.touchScreen = TouchScren.TAP;
+    if (this.character?.state === CharacterState.MOVING) {
+      this.character.flip();
+      this.characterFlip = !this.characterFlip;
+    }
+
+    this.holdTimeoutId = setTimeout(() => {
+      if (this.touchScreen === TouchScren.TAP) {
+        this.touchScreen = TouchScren.HOLDING;
         this.bridge = this.pillar.createBridge();
         this.addChild(this.bridge);
         this.pillar.bridgeState = BridgeState.GROWING;
@@ -144,12 +176,11 @@ export default class Game extends Container {
   };
 
   onPointerUp = () => {
-    if ((this.touchScreen = TouchScren.HOLDING)) {
-      this.touchScreen = TouchScren.CLEAR;
-      const holdDuration = Date.now() - this.holdStartTime;
-      if (holdDuration >= this.minHoldTime) {
-        this.pillar.bridgeState = BridgeState.ROTATING;
-      }
+    this.touchScreen = TouchScren.CLEAR;
+
+    if (this.holdTimeoutId) {
+      clearTimeout(this.holdTimeoutId);
+      this.holdTimeoutId = null;
     }
   };
 }

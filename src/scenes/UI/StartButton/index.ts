@@ -1,19 +1,15 @@
-import { BitmapText, Graphics, Container, Circle } from 'pixi.js';
+import { Text, Graphics, Container, Circle } from 'pixi.js';
 import { AppSizeProps } from '../../../app/App';
+import { COLORS, skewStyle } from '../../../styles';
 
 export default class StartButton extends Container {
   button: Graphics;
-  buttonText: BitmapText;
+  buttonText: Text;
 
   constructor(appSize: AppSizeProps) {
     super();
     this.button = new Graphics();
-    this.buttonText = new BitmapText('Start', {
-      fontFamily: 'Arial',
-      fontSize: 24,
-      fill: '0x00FF00',
-      align: 'center',
-    });
+    this.buttonText = new Text({ text: 'RETRY', style: skewStyle });
     this.init(appSize);
   }
 
@@ -21,12 +17,13 @@ export default class StartButton extends Container {
     const { width, height } = appSize;
 
     this.button
-      .circle(width / 2, height / 2, 70)
-      .stroke({ width: 3, color: 0x00ff00 });
-    this.button.hitArea = new Circle(width / 2, height / 2, 70);
+      .circle(width / 2, height / 2, 80)
+      .fill(COLORS.forestGreen)
+      .stroke({ width: 8, color: '#004620' });
+    this.button.hitArea = new Circle(width / 2, height / 2, 80);
     this.button.interactive = true;
     this.button.cursor = 'pointer';
-    this.buttonText.anchor.set(0.5);
+    this.buttonText.anchor.set(0.45, 0.5);
     this.buttonText.x = width / 2;
     this.buttonText.y = height / 2;
 
