@@ -13,12 +13,20 @@ export type AppSizeProps = {
 export default async () => {
   const { width, height } = getScreenSize();
   const appSize = {
-    width: width < 500 ? width : 500,
-    height: height < 800 ? height : 800,
+    width: Math.min(width, 500),
+    height: Math.min(height, 800),
   };
 
   const app = new Application();
   await app.init(appSize);
+  const scaleFactor = Math.min(
+    window.innerWidth / appSize.width,
+    window.innerHeight / appSize.height
+  );
+  console.log('AppSize:', appSize);
+  console.log('Scale Factor:', scaleFactor);
+  console.log('Renderer Size:', app.renderer.width, app.renderer.height);
+
   const bgTexture_1 = await Assets.load('/_11_background.png');
   const bgTexture_2 = await Assets.load('/_08_clouds.png');
   const bgTexture_3 = await Assets.load('/_05_hill1.png');
@@ -60,6 +68,7 @@ export default async () => {
     ui.showScore();
     ui.hideGameOverScreen();
     game.start(true);
+    app.ticker.start();
   });
 
   app.ticker.add((ticker) => {
@@ -82,8 +91,10 @@ export default async () => {
         }
       }
     }
+
     if (game.state === GameState.OVER) {
       ui.showGameOver();
+      app.ticker.stop();
     }
 
     if (game.state === GameState.STARTING) {

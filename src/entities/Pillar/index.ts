@@ -4,6 +4,8 @@ import { AppSizeProps } from '../../app/App';
 export enum BridgeState {
   ROTATING = 'rotating',
   DROPPED = 'dropped',
+  FOLDING = 'folding',
+  COLLAPSED = 'collapsed',
   CROSSED = 'crossed',
   GROWING = 'growing',
   CREATING = 'creating',
@@ -13,6 +15,7 @@ export enum BridgeOutfits {
   LESSER = 'less',
   LARGER = 'larger',
   EXACT = 'exact',
+  NEAR = 'near',
 }
 
 export default class PillarsFabric {
@@ -26,6 +29,7 @@ export default class PillarsFabric {
   bridgePosition: number = 0;
   currMinX: number = 0;
   bridgeOutFits: BridgeOutfits | undefined;
+  triggerPlateSize: AppSizeProps = { width: 10, height: 5 };
 
   constructor(appSize: AppSizeProps) {
     this.pillarY = appSize?.height - this.pillarHeight;
@@ -54,8 +58,28 @@ export default class PillarsFabric {
     this.currMaxX = currentX + randomWidth;
     this.currMinX = currentX;
 
+    this.createTriggerPlate(pillar, currentX + randomWidth / 2, this.pillarY);
+
     return pillar;
   }
+
+  createTriggerPlate = (parent: Graphics, x: number, y: number) => {
+    const button = new Graphics();
+
+    button.fill(0xff0000);
+    button.rect(
+      0,
+      0,
+      this.triggerPlateSize.width,
+      this.triggerPlateSize.height
+    );
+    button.fill();
+
+    button.x = x - this.triggerPlateSize.width / 2;
+    button.y = y;
+
+    parent.addChild(button);
+  };
 
   createBridge(
     x: number = this.bridgePosition,
@@ -81,6 +105,20 @@ export default class PillarsFabric {
       console.log('bridge GROW');
     }
   }
+
+  folds = (delta: number) => {
+    if (this.bridge) {
+      if (this.bridge.rotation < Math.PI) {
+        this.bridge.rotation += delta * 0.1;
+        console.log('bridge Folds');
+        if (this.bridge.rotation >= Math.PI) {
+          this.bridgeState = BridgeState.COLLAPSED;
+          this.bridge.rotation = Math.PI;
+        }
+      }
+    }
+  };
+
   dropBridge(delta: number) {
     if (this.bridge) {
       if (this.bridge.rotation < Math.PI / 2) {
@@ -95,9 +133,18 @@ export default class PillarsFabric {
               ? BridgeOutfits.LARGER
               : this.endOfbridge < this.currMinX
               ? BridgeOutfits.LESSER
-              : BridgeOutfits.EXACT;
+              : this.endOfbridge >
+                  this.currCneter - this.triggerPlateSize.width / 2 &&
+                this.endOfbridge <
+                  this.currCneter + this.triggerPlateSize.width / 2
+              ? BridgeOutfits.EXACT
+              : BridgeOutfits.NEAR;
         }
       }
     }
+  }
+
+  get currCneter() {
+    return this.currMinX + (this.currMaxX - this.currMinX) / 2;
   }
 }

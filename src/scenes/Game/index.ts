@@ -104,10 +104,7 @@ export default class Game extends Container {
     ) {
       return this.pillar.growBridge(deltaTime * 0.01);
     }
-    if (
-      this.pillar.bridgeState !== BridgeState.DROPPED &&
-      this.character.state !== CharacterState.MOVING
-    ) {
+    if (this.pillar.bridgeState === BridgeState.ROTATING) {
       return this.pillar.dropBridge(deltaTime * 0.01);
     }
 
@@ -127,11 +124,15 @@ export default class Game extends Container {
         }
       }
 
-      if (this.pillar.bridgeOutFits === BridgeOutfits.EXACT) {
+      if (
+        this.pillar.bridgeOutFits === BridgeOutfits.EXACT ||
+        this.pillar.bridgeOutFits === BridgeOutfits.NEAR
+      ) {
         if (
           this.character.x <
           this.pillar.currMaxX - this.character.width / 1.5
         ) {
+          console.log(this.pillar.bridgeOutFits);
           return this.character.move(deltaTime);
         } else {
           this.pillar.bridgeState = BridgeState.CROSSED;
@@ -145,6 +146,7 @@ export default class Game extends Container {
           return this.character.move(deltaTime);
         } else {
           console.log('упал с мостом');
+          this.pillar.bridgeState = BridgeState.FOLDING;
           return (this.character.state = CharacterState.FALLING);
         }
       }
@@ -163,6 +165,9 @@ export default class Game extends Container {
       if (this.character.y - this.character.height > this.appSize.height) {
         this.state = GameState.OVER;
         return this.character.destroy();
+      }
+      if (this.pillar.bridgeState === BridgeState.FOLDING) {
+        this.pillar.folds(deltaTime);
       }
       this.character.falling(deltaTime);
     }
@@ -206,6 +211,9 @@ export default class Game extends Container {
     this.touchScreen = TouchScren.CLEAR;
 
     if (this.holdTimeoutId) {
+      if (this.pillar.bridgeState === BridgeState.GROWING) {
+        this.pillar.bridgeState = BridgeState.ROTATING;
+      }
       clearTimeout(this.holdTimeoutId);
       this.holdTimeoutId = null;
     }
