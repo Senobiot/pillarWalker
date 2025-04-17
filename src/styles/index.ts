@@ -38,6 +38,12 @@ export const skewStyle = new TextStyle({
   fontWeight: 'lighter',
 });
 
+export const lightBlueStyle = {
+  fontFamily: 'Arial',
+  fontSize: 24,
+  fill: '#53BECF',
+};
+
 export const COLORS = {
   green: '0x111111',
   darkGreen: '0x006400',

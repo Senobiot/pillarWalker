@@ -132,7 +132,6 @@ export default class Game extends Container {
           this.character.x <
           this.pillar.currMaxX - this.character.width / 1.5
         ) {
-          console.log(this.pillar.bridgeOutFits);
           return this.character.move(deltaTime);
         } else {
           this.pillar.bridgeState = BridgeState.CROSSED;
@@ -167,7 +166,7 @@ export default class Game extends Container {
         return this.character.destroy();
       }
       if (this.pillar.bridgeState === BridgeState.FOLDING) {
-        this.pillar.folds(deltaTime);
+        this.pillar.foldsBridge(deltaTime);
       }
       this.character.falling(deltaTime);
     }
@@ -180,7 +179,7 @@ export default class Game extends Container {
   };
 
   addPillar = () => {
-    const pillar = this.pillar.create();
+    const pillar = this.pillar.createPillar();
     this.addChild(pillar);
     this.pillars.push(pillar);
 

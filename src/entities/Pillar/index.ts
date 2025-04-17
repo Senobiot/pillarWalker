@@ -1,5 +1,6 @@
 import { Graphics } from 'pixi.js';
 import { AppSizeProps } from '../../app/App';
+import FloatingText from '../Popup';
 
 export enum BridgeState {
   ROTATING = 'rotating',
@@ -35,7 +36,7 @@ export default class PillarsFabric {
     this.pillarY = appSize?.height - this.pillarHeight;
   }
 
-  create(): Graphics {
+  createPillar(): Graphics {
     const minGap = 100;
     const maxGap = 250;
     const randomGap =
@@ -106,7 +107,7 @@ export default class PillarsFabric {
     }
   }
 
-  folds = (delta: number) => {
+  foldsBridge = (delta: number) => {
     if (this.bridge) {
       if (this.bridge.rotation < Math.PI) {
         this.bridge.rotation += delta * 0.1;
@@ -128,16 +129,23 @@ export default class PillarsFabric {
           this.bridgeState = BridgeState.DROPPED;
           this.bridge.rotation = Math.PI / 2;
           this.endOfbridge = this.bridge.height + this.bridge.x;
+
+          if (
+            this.endOfbridge >
+              this.currCneter - this.triggerPlateSize.width / 2 &&
+            this.endOfbridge < this.currCneter + this.triggerPlateSize.width / 2
+          ) {
+            this.bridge.parent.addChild(
+              new FloatingText('+1', this.endOfbridge, this.pillarY)
+            );
+            return (this.bridgeOutFits = BridgeOutfits.EXACT);
+          }
+
           this.bridgeOutFits =
             this.endOfbridge > this.currMaxX
               ? BridgeOutfits.LARGER
               : this.endOfbridge < this.currMinX
               ? BridgeOutfits.LESSER
-              : this.endOfbridge >
-                  this.currCneter - this.triggerPlateSize.width / 2 &&
-                this.endOfbridge <
-                  this.currCneter + this.triggerPlateSize.width / 2
-              ? BridgeOutfits.EXACT
               : BridgeOutfits.NEAR;
         }
       }
