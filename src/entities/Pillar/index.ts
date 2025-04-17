@@ -96,14 +96,13 @@ export default class PillarsFabric {
 
     this.bridge.x = x - width;
     this.bridge.y = y;
-    console.log('bridge Creating');
+
     return this.bridge;
   }
 
   growBridge(delta: number) {
     if (this.bridge) {
       this.bridge.scale.y -= delta * 300;
-      console.log('bridge GROW');
     }
   }
 
@@ -111,7 +110,7 @@ export default class PillarsFabric {
     if (this.bridge) {
       if (this.bridge.rotation < Math.PI) {
         this.bridge.rotation += delta * 0.1;
-        console.log('bridge Folds');
+
         if (this.bridge.rotation >= Math.PI) {
           this.bridgeState = BridgeState.COLLAPSED;
           this.bridge.rotation = Math.PI;
@@ -124,7 +123,7 @@ export default class PillarsFabric {
     if (this.bridge) {
       if (this.bridge.rotation < Math.PI / 2) {
         this.bridge.rotation += delta * 2;
-        console.log('bridge Rotating');
+
         if (this.bridge.rotation >= Math.PI / 2) {
           this.bridgeState = BridgeState.DROPPED;
           this.bridge.rotation = Math.PI / 2;

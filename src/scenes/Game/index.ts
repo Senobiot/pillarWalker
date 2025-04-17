@@ -5,6 +5,9 @@ import PillarsFabric, {
   BridgeState,
 } from '../../entities/Pillar';
 import Character, { CharacterState } from '../../entities/Character';
+import Collectable from '../../entities/Collectable';
+import { getChance, getRandInBounds } from '../../utils';
+import { SizeProps } from '../../types';
 
 export enum GameState {
   ACTIVE = 'active',
@@ -39,6 +42,8 @@ export default class Game extends Container {
   holdTimeoutId: number | null = null;
   score: number = 0;
   initialX: number;
+  collectableSize: SizeProps = { width: 32, height: 56 };
+  collectableChance: number = 0.3;
 
   constructor(appSize: AppSizeProps, appStage: Container) {
     super();
@@ -74,7 +79,6 @@ export default class Game extends Container {
       });
       this.removeChildren();
 
-      console.log(this.children);
       this.pillar = new PillarsFabric(this.appSize);
       const pillarPosition = this.addPillar();
       this.character = new Character();
@@ -115,6 +119,7 @@ export default class Game extends Container {
       if (!this.character.playing) {
         this.character.play();
         this.character.state = CharacterState.MOVING;
+        this.addCollectable();
       }
 
       if (this.characterFlip) {
@@ -184,6 +189,24 @@ export default class Game extends Container {
     this.pillars.push(pillar);
 
     return pillar.getBounds();
+  };
+
+  addCollectable = () => {
+    if (!getChance(this.collectableChance)) return;
+
+    const positionX = getRandInBounds({
+      minX: this.pillar.bridgePosition,
+      maxX: this.pillar.currMinX,
+      width: this.collectableSize.width,
+    });
+
+    this.addChild(
+      new Collectable({
+        x: positionX,
+        y: this.pillar.pillarY,
+        ...this.collectableSize,
+      })
+    );
   };
 
   onPointerDown = () => {

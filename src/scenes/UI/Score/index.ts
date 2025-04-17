@@ -20,7 +20,6 @@ export default class Score extends Text {
   }
   setScore = (score: number = 0) => {
     this.currentScore = score;
-    console.log(score);
     this.text = `Score: ${score}`;
     this.style = regularStyle;
   };

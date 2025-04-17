@@ -1,18 +1,22 @@
 import { Container, TilingSprite, Texture } from 'pixi.js';
-import { AppSizeProps } from '../../app/App';
+import { SizeProps } from '../../types';
 
 export default class Background extends Container {
   layers: { sprite: TilingSprite; speed: number }[];
 
-  constructor(appSize: AppSizeProps, textures: Texture[]) {
+  constructor(appSize: SizeProps, textures: Texture[]) {
     super();
 
-    this.layers = textures.map((tex, index) => {
+    this.layers = textures.map((texture, index) => {
       const speed = index ** 2 * 0.5;
-      const layer = new TilingSprite(tex, appSize.width, appSize.height);
+      const layer = new TilingSprite({
+        texture,
+        width: appSize.width,
+        height: appSize.height,
+      });
 
-      const scaleX = (appSize.width / tex.width) * 2;
-      const scaleY = appSize.height / tex.height;
+      const scaleX = (appSize.width / texture.width) * 2;
+      const scaleY = appSize.height / texture.height;
       layer.tileScale.set(scaleX, scaleY);
 
       layer.tilePosition.x = 0;
