@@ -9,12 +9,11 @@ export enum CharacterState {
 
 export default class Character extends AnimatedSprite {
   state: CharacterState | undefined;
-  distance: number = 0;
-  targetDistance: number = 200;
   speed: number = 3;
 
   constructor() {
     super([Texture.EMPTY]);
+
     this.init();
   }
 
@@ -45,7 +44,6 @@ export default class Character extends AnimatedSprite {
 
   move(deltaTime: number) {
     this.x += this.speed * deltaTime;
-    // this.distance += this.speed * deltaTime;
   }
 
   falling(deltaTime: number) {
@@ -53,7 +51,6 @@ export default class Character extends AnimatedSprite {
   }
 
   flip = () => {
-    console.log('filp');
     this.scale.y = -this.scale.y;
   };
 }

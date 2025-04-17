@@ -1,4 +1,4 @@
-import { Container, Graphics } from 'pixi.js';
+import { Container, Graphics, Sprite } from 'pixi.js';
 import { AppSizeProps } from '~/app/App';
 import PillarsFabric, { BridgeOutfits, BridgeState } from '~/entities/Pillar';
 import Character, { CharacterState } from '~/entities/Character';
@@ -36,11 +36,12 @@ export default class Game extends Container {
   characterFlip: boolean = false;
   characterMoving: boolean = false;
   touchTimeoutId: number | null;
-  holdTimeoutId: number | null = null;
   score: number = 0;
   initialX: number;
   collectableSize: SizeProps = { width: 32, height: 56 };
   collectableChance: number = 0.3;
+  collectable: Sprite | null = null;
+  private holdTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor(appSize: AppSizeProps, appStage: Container) {
     super();
@@ -79,6 +80,7 @@ export default class Game extends Container {
       this.pillar = new PillarsFabric(this.appSize);
       const pillarPosition = this.addPillar();
       this.character = new Character();
+      this.characterFlip = false;
       this.character.x = pillarPosition.maxX - 32;
       this.character.y = pillarPosition.minY;
 
@@ -89,10 +91,7 @@ export default class Game extends Container {
     this.addPillar();
 
     this.state = GameState.ACTIVE;
-    this.appStage.on('pointerdown', this.onPointerDown);
-    this.appStage.on('pointerup', this.onPointerUp);
-    this.appStage.on('pointerupoutside', this.onPointerUp);
-    this.appStage.interactive = true;
+    this.addListeners();
   };
 
   update = (deltaTime: number) => {
@@ -120,6 +119,13 @@ export default class Game extends Container {
       }
 
       if (this.characterFlip) {
+        if (this.collectable) {
+          const gotCollectable = this.checkCollision(this.collectable.x);
+          if (gotCollectable) {
+            this.removeCollectable();
+            console.log('got coolectable');
+          }
+        }
         if (this.checkCollision()) {
           console.log('Врезался');
           return (this.character.state = CharacterState.FALLING);
@@ -136,6 +142,7 @@ export default class Game extends Container {
         ) {
           return this.character.move(deltaTime);
         } else {
+          this.removeCollectable();
           this.pillar.bridgeState = BridgeState.CROSSED;
           this.character.state = CharacterState.CROSSED;
           this.character.stop(); // animation
@@ -165,6 +172,7 @@ export default class Game extends Container {
     if (this.character.state === CharacterState.FALLING) {
       if (this.character.y - this.character.height > this.appSize.height) {
         this.state = GameState.OVER;
+        this.removeListeners();
         return this.character.destroy();
       }
       if (this.pillar.bridgeState === BridgeState.FOLDING) {
@@ -174,10 +182,24 @@ export default class Game extends Container {
     }
   };
 
-  checkCollision = () => {
+  addListeners = () => {
+    this.appStage.on('pointerdown', this.onPointerDown);
+    this.appStage.on('pointerup', this.onPointerUp);
+    this.appStage.on('pointerupoutside', this.onPointerUp);
+    this.appStage.interactive = true;
+  };
+
+  removeListeners = () => {
+    this.appStage.off('pointerdown', this.onPointerDown);
+    this.appStage.off('pointerup', this.onPointerUp);
+    this.appStage.off('pointerupoutside', this.onPointerUp);
+    this.appStage.interactive = false;
+  };
+
+  checkCollision = (objectX = this.pillar.currMinX) => {
     if (!this.character) return;
 
-    return this.character.x + this.character.width - 40 > this.pillar.currMinX;
+    return this.character.x + this.character.width - 40 > objectX;
   };
 
   addPillar = () => {
@@ -197,25 +219,32 @@ export default class Game extends Container {
       width: this.collectableSize.width,
     });
 
-    this.addChild(
-      new Collectable({
-        x: positionX,
-        y: this.pillar.pillarY,
-        ...this.collectableSize,
-      })
-    );
+    this.collectable = new Collectable({
+      x: positionX,
+      y: this.pillar.pillarY,
+      ...this.collectableSize,
+    });
+
+    this.addChild(this.collectable);
+  };
+
+  removeCollectable = () => {
+    if (this.collectable) {
+      this.removeChild(this.collectable);
+      this.collectable.destroy();
+      this.collectable = null;
+    }
   };
 
   onPointerDown = () => {
     if (this.state !== GameState.ACTIVE) return;
 
-    this.holdStartTime = Date.now();
-    this.touchScreen = TouchScren.TAP;
     if (this.character?.state === CharacterState.MOVING) {
       this.character.flip();
-      this.characterFlip = !this.characterFlip;
+      return (this.characterFlip = !this.characterFlip);
     }
-
+    this.holdStartTime = Date.now();
+    this.touchScreen = TouchScren.TAP;
     this.holdTimeoutId = setTimeout(() => {
       if (this.touchScreen === TouchScren.TAP) {
         this.touchScreen = TouchScren.HOLDING;
