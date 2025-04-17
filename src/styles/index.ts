@@ -23,6 +23,15 @@ export const regularStyle = new TextStyle({
   align: 'center',
 });
 
+export const smallStyle = new TextStyle({
+  fontFamily: 'Arial',
+  fontSize: 20,
+  fontWeight: 'lighter',
+  fill: '#ffffff',
+  stroke: { color: 'rgba(147 126 104)', width: 8, join: 'round' },
+  align: 'center',
+});
+
 export const skewStyle = new TextStyle({
   fontFamily: 'Arial',
   dropShadow: {
@@ -62,4 +71,6 @@ export const COLORS = {
   orange: '0xffa500',
   pink: '0xffc0cb',
   purple: '0x800080',
+  desert: 'rgb(225 209 182)',
+  desertDark: 'rgba(147 126 104)',
 };

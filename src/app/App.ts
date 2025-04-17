@@ -4,6 +4,7 @@ import { getScreenSize } from '../utils';
 import UI from '../scenes/UI';
 import Background from '../scenes/Background';
 import { CharacterState } from '../entities/Character';
+import SelectScreen from '~/scenes/SelectScreen';
 
 export type AppSizeProps = {
   width: number;
@@ -40,6 +41,8 @@ export default async () => {
   ]);
   const ui = new UI(appSize);
   const game = new Game(appSize, app.stage);
+  const selectScreen = new SelectScreen(appSize);
+
   game.y = 100;
   game.x = game.initialX;
 
@@ -52,14 +55,21 @@ export default async () => {
   app.stage.addChild(gameMask);
 
   ui.showStartScreen();
+
   app.stage.addChild(bg);
   app.stage.addChild(game);
   app.stage.addChild(ui);
+  app.stage.addChild(selectScreen);
 
   ui.startButton.onStart(() => {
     ui.hideStartScreen();
     ui.showScore();
     game.state = GameState.STARTING;
+  });
+
+  ui.selectButton.onStart(() => {
+    ui.hideStartScreen();
+    selectScreen.show();
   });
 
   ui.gameOver.retryButton.onRetry(() => {

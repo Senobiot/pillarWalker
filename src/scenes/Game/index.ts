@@ -112,9 +112,11 @@ export default class Game extends Container {
       this.pillar.bridgeState === BridgeState.DROPPED &&
       this.character.state !== CharacterState.FALLING
     ) {
+      if (this.character.state !== CharacterState.MOVING) {
+        this.character.state = CharacterState.MOVING;
+      }
       if (!this.character.playing) {
         this.character.play();
-        this.character.state = CharacterState.MOVING;
         this.addCollectable();
       }
 

@@ -1,4 +1,4 @@
-import { Assets, AnimatedSprite, Texture, Rectangle } from 'pixi.js';
+import { Assets, AnimatedSprite, Texture } from 'pixi.js';
 
 export enum CharacterState {
   STAY = 'stay',
@@ -18,28 +18,26 @@ export default class Character extends AnimatedSprite {
   }
 
   async init() {
-    const charSheet = await Assets.load('char.png');
-    const charSprites: Texture[] = [];
+    console.log('character create');
+    const textures = [];
 
-    for (let i = 0; i < 6; i++) {
-      const x = i * 32; // 32 px
-      const y = 0;
-      const frame = new Rectangle(x, y, 32, 32);
-
-      charSprites.push(
-        new Texture({
-          source: charSheet.source,
-          frame,
-        })
-      );
+    for (let index = 1; index <= 10; index++) {
+      console.log(`chars/1/idle/${index}.png`);
+      const asset = await Assets.load(`chars/1/idle/${index}.png`);
+      textures.push(new Texture({ source: asset.source }));
     }
 
-    this.textures = charSprites;
     this.animationSpeed = 0.15;
-    this.scale.set(2, 2);
     this.loop = true;
+    this.width = 73;
+    this.height = 93;
+
+    this.textures = textures;
+    this.animationSpeed = 0.15;
+
     this.state = CharacterState.STAY;
     this.anchor.set(0.5, 1);
+    this.play();
   }
 
   move(deltaTime: number) {

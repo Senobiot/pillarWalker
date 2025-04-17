@@ -3,17 +3,20 @@ import StartButton from './StartButton';
 import { AppSizeProps } from '../../app/App';
 import Score from './Score';
 import GameOver from './GameOver';
+import SelectButton from './SelectButton';
 
 export default class UI extends Container {
   startButton: StartButton;
   score: Score;
   gameOver: GameOver;
+  selectButton: SelectButton;
 
   constructor(appSize: AppSizeProps) {
     super();
     this.startButton = new StartButton(appSize);
     this.score = new Score(appSize);
     this.gameOver = new GameOver(appSize);
+    this.selectButton = new SelectButton(appSize);
   }
 
   reset = () => {
@@ -23,6 +26,7 @@ export default class UI extends Container {
 
   showStartScreen = () => {
     this.addChild(this.startButton);
+    this.addChild(this.selectButton);
   };
 
   showScore = () => {
@@ -37,6 +41,7 @@ export default class UI extends Container {
 
   hideStartScreen = () => {
     this.removeChild(this.startButton);
+    this.removeChild(this.selectButton);
   };
 
   hideGameOverScreen = () => {
