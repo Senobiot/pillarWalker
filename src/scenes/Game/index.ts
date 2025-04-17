@@ -1,13 +1,10 @@
 import { Container, Graphics } from 'pixi.js';
-import { AppSizeProps } from '../../app/App';
-import PillarsFabric, {
-  BridgeOutfits,
-  BridgeState,
-} from '../../entities/Pillar';
-import Character, { CharacterState } from '../../entities/Character';
-import Collectable from '../../entities/Collectable';
-import { getChance, getRandInBounds } from '../../utils';
-import { SizeProps } from '../../types';
+import { AppSizeProps } from '~/app/App';
+import PillarsFabric, { BridgeOutfits, BridgeState } from '~/entities/Pillar';
+import Character, { CharacterState } from '~/entities/Character';
+import Collectable from '~/entities/Collectable';
+import { getChance, getRandInBounds } from '~/utils';
+import { SizeProps } from '~/types';
 
 export enum GameState {
   ACTIVE = 'active',
