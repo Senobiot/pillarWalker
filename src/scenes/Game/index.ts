@@ -1,24 +1,17 @@
 import { Container, Sprite, Texture } from 'pixi.js';
-import PillarsFabric, { BridgeOutfits, BridgeState } from '~/entities/Pillar';
-import Character, { CharacterState } from '~/entities/Character';
+import PillarsFabric from '~/entities/Pillar';
+import Character from '~/entities/Character';
 import Collectable from '~/entities/Collectable';
 import { getChance, getRandInBounds } from '~/utils';
-import { SizeProps } from '~/types';
+import {
+  BridgeOutfits,
+  BridgeState,
+  CharacterState,
+  GameState,
+  SizeProps,
+  TouchScren,
+} from '~/types';
 import FloatingText from '~/entities/Popup';
-
-export enum GameState {
-  ACTIVE = 'active',
-  PAUSED = 'paused',
-  MENU = 'menu',
-  OVER = 'over',
-  STARTING = 'starting',
-}
-
-enum TouchScren {
-  HOLDING = 'holding',
-  TAP = 'tap',
-  CLEAR = 'clear',
-}
 
 export default class Game extends Container {
   state: GameState;

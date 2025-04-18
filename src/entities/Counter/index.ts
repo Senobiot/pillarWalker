@@ -1,13 +1,6 @@
-import { Text, TextStyle } from 'pixi.js';
+import { Text } from 'pixi.js';
 import { regularStyle } from '~/styles';
-import { PositionProps } from '~/types';
-
-type CounterProps = {
-  initialText?: string;
-  initial?: number;
-  position?: PositionProps;
-  style?: TextStyle;
-};
+import { CounterProps } from '~/types';
 
 export default class Counter extends Text {
   currentScore: number = 0;

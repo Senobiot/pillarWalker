@@ -1,14 +1,15 @@
 import { Application, Assets, Graphics } from 'pixi.js';
-import Game, { GameState } from '../scenes/Game';
-import { getScreenSize } from '../utils';
-import UI from '../scenes/UI';
+import Game from '~/scenes/Game';
+import { getScreenSize } from '~/utils';
+import UI from '~/scenes/UI';
 import Background from '../scenes/Background';
-import { CharacterState } from '../entities/Character';
 import SelectScreen from '~/scenes/SelectScreen';
+import { manifest } from '~/config';
+import { CharacterState, GameState } from '~/types';
 
 export default async () => {
-  let shakeFrames = 0;
-  const TOTAL_SHAKE_FRAMES = 75;
+  const shakeFrames = { total: 75, current: 0 };
+
   const { width, height } = getScreenSize();
   const appSize = {
     width: Math.min(width, 600),
@@ -18,21 +19,18 @@ export default async () => {
 
   const app = new Application();
   await app.init(appSize);
-
-  const bgTexture_1 = await Assets.load('/_11_background.png');
-  const bgTexture_2 = await Assets.load('/_08_clouds.png');
-  const bgTexture_3 = await Assets.load('/_05_hill1.png');
-  const bgTexture_4 = await Assets.load('/_02_trees and bushes.png');
-  await Assets.load('/pillar2.png');
-  await Assets.load('/brick.png');
-  await Assets.load('/brick2.png');
+  await Assets.init({ manifest });
+  await Assets.loadBundle('background');
+  await Assets.loadBundle('collectables');
+  await Assets.loadBundle('pillars');
 
   const bg = new Background(appSize, [
-    bgTexture_1,
-    bgTexture_2,
-    bgTexture_3,
-    bgTexture_4,
+    Assets.get('sky'),
+    Assets.get('clouds'),
+    Assets.get('hill1'),
+    Assets.get('trees'),
   ]);
+
   const ui = new UI(appSize);
   const game = new Game(
     appSize,
@@ -46,9 +44,7 @@ export default async () => {
   game.x = game.initialX;
 
   const gameMask = new Graphics();
-  gameMask.fill(0xffffff);
-  gameMask.rect(0, 0, appSize.width, appSize.height);
-  gameMask.fill();
+  gameMask.fill(0xffffff).rect(0, 0, appSize.width, appSize.height).fill();
 
   game.mask = gameMask;
   app.stage.addChild(gameMask);
@@ -90,6 +86,7 @@ export default async () => {
 
   app.ticker.add((ticker) => {
     bg.animateClouds(ticker.deltaTime);
+
     if (game.state === GameState.ACTIVE) {
       game.update(ticker.deltaTime);
 
@@ -111,17 +108,17 @@ export default async () => {
     }
 
     if (game.state === GameState.OVER) {
-      if (shakeFrames < TOTAL_SHAKE_FRAMES) {
-        if (shakeFrames % 2 === 0) {
+      if (shakeFrames.current < shakeFrames.total) {
+        if (shakeFrames.current % 2 === 0) {
           game.x += Math.random() * 10 - 5;
           game.y += Math.random();
           bg.x = Math.random() * 10 - 5;
         }
-        shakeFrames++;
+        shakeFrames.current++;
       } else {
         ui.showGameOver();
         app.ticker.stop();
-        shakeFrames = 0;
+        shakeFrames.current = 0;
       }
     }
 

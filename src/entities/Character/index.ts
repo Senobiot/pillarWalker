@@ -1,12 +1,6 @@
 import { Assets, AnimatedSprite, Texture } from 'pixi.js';
-import { assetsConfig } from '~/config/';
-import { SizeProps } from '~/types';
-export enum CharacterState {
-  STAY = 'stay',
-  MOVING = 'moving',
-  CROSSED = 'success',
-  FALLING = 'falling',
-}
+import { assetsConfig } from '~/config';
+import { CharacterState, SizeProps } from '~/types';
 
 export default class Character extends AnimatedSprite {
   state: CharacterState | undefined;

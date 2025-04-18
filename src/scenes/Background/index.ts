@@ -1,5 +1,5 @@
 import { Container, TilingSprite, Texture } from 'pixi.js';
-import { SizeProps } from '../../types';
+import { SizeProps } from '~/types';
 
 export default class Background extends Container {
   layers: { sprite: TilingSprite; speed: number }[];

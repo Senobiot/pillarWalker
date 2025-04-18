@@ -6,24 +6,7 @@ import {
   Texture,
   TilingSprite,
 } from 'pixi.js';
-import { SizeProps } from '~/types';
-
-export enum BridgeState {
-  ROTATING = 'rotating',
-  DROPPED = 'dropped',
-  FOLDING = 'folding',
-  COLLAPSED = 'collapsed',
-  CROSSED = 'crossed',
-  GROWING = 'growing',
-  CREATING = 'creating',
-}
-
-export enum BridgeOutfits {
-  LESSER = 'less',
-  LARGER = 'larger',
-  EXACT = 'exact',
-  NEAR = 'near',
-}
+import { BridgeOutfits, BridgeState, SizeProps } from '~/types';
 
 export default class PillarsFabric {
   bridgeState: BridgeState | undefined;
@@ -38,7 +21,8 @@ export default class PillarsFabric {
   bridgeOutFits: BridgeOutfits | undefined;
   triggerPlateSize: SizeProps = { width: 20, height: 5 };
   pillarsAmount: number = 0;
-  texture: Texture = Assets.get('/pillar2.png');
+  texture: Texture = Assets.get('pillar-2');
+  bridgeTexture = Assets.get('brick-2');
   appSize: SizeProps;
   minWidth: number;
   maxWidth: number;
@@ -115,7 +99,7 @@ export default class PillarsFabric {
     const initialHeight = 1;
 
     const bridgeSprite = new TilingSprite({
-      texture: Assets.get('/brick2.png'),
+      texture: this.bridgeTexture,
       width: width,
       height: initialHeight,
     });

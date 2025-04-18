@@ -1,7 +1,7 @@
 import { Assets, AnimatedSprite, Texture, Container, Graphics } from 'pixi.js';
 import { COLORS, smallStyle } from '~/styles';
 import { SizeProps } from '~/types';
-import { assetsConfig } from '~/config/';
+import { assetsConfig } from '~/config';
 import Button from '~/entities/Button';
 
 export default class SelectScreen extends Container {

@@ -1,16 +1,6 @@
-import { Text, Graphics, Container, TextStyle } from 'pixi.js';
+import { Text, Graphics, Container } from 'pixi.js';
 import { COLORS, regularStyle } from '~/styles';
-import { ColorsProps, ButtonSizeProps, PositionProps } from '~/types';
-
-type ButtonProps = {
-  size?: ButtonSizeProps;
-  position: PositionProps;
-  text: string;
-  textStyle?: TextStyle;
-  variant?: 'circle' | 'rect' | 'roundRect';
-  colors?: ColorsProps;
-  noHover?: boolean;
-};
+import { ColorsProps, ButtonSizeProps, ButtonProps } from '~/types';
 
 export default class Button extends Container {
   button: Graphics;

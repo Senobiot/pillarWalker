@@ -1,5 +1,5 @@
 import { Text, Ticker } from 'pixi.js';
-import { lightBlueStyle } from '../../styles';
+import { lightBlueStyle } from '~/styles';
 
 export default class FloatingText extends Text {
   constructor(text: string, x: number, y: number, duration: number = 1000) {
