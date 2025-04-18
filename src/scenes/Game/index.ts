@@ -70,11 +70,12 @@ export default class Game extends Container {
   }
 
   init = () => {
-    console.log('game init');
     this.state = GameState.MENU;
     const pillarPosition = this.addPillar();
     this.character = new Character();
-    this.character.x = pillarPosition.maxX - 32;
+    const startBounds = this.pillars[0].getBounds();
+    this.character.x =
+      startBounds.x + startBounds.width / 2 - this.character.width / 2;
     this.character.y = pillarPosition.minY;
     this.addChild(this.character);
   };
@@ -88,7 +89,6 @@ export default class Game extends Container {
         child.destroy();
       });
       this.removeChildren();
-
       this.pillar = new PillarsFabric(this.appSize);
       const pillarPosition = this.addPillar();
       this.character = new Character();
@@ -100,9 +100,7 @@ export default class Game extends Container {
       this.addChild(this.character);
     }
 
-    console.log('game started');
     this.addPillar();
-
     this.state = GameState.ACTIVE;
     this.addListeners();
   };
@@ -113,7 +111,6 @@ export default class Game extends Container {
       this.character.texturesStay = textures;
       this.character.textures = textures;
       this.character.play();
-      console.log('set new character');
     }
   };
 
@@ -149,11 +146,9 @@ export default class Game extends Container {
           if (gotCollectable) {
             this.removeCollectable();
             this.gotCollectable = true;
-            console.log('got coolectable');
           }
         }
         if (this.checkCollision()) {
-          console.log('Врезался');
           return (this.character.state = CharacterState.FALLING);
         }
       }
@@ -205,7 +200,6 @@ export default class Game extends Container {
         if (this.character.x < this.pillar.endOfbridge) {
           return this.character.move(deltaTime);
         } else {
-          console.log('упал с мостом');
           this.pillar.bridgeState = BridgeState.FOLDING;
           return (this.character.state = CharacterState.FALLING);
         }
@@ -215,7 +209,6 @@ export default class Game extends Container {
         if (this.character.x < this.pillar.endOfbridge) {
           return this.character.move(deltaTime);
         } else {
-          console.log('упал с моста');
           return (this.character.state = CharacterState.FALLING);
         }
       }

@@ -12,6 +12,7 @@ export default class Character extends AnimatedSprite {
   speed: number = 3;
   texturesStay: Texture[] = [];
   texturesRun: Texture[] = [];
+  innerWidth: number = 70;
 
   constructor() {
     super([Texture.EMPTY]);
@@ -20,7 +21,6 @@ export default class Character extends AnimatedSprite {
   }
 
   async init() {
-    console.log('character create');
     const config = assetsConfig.characters[1];
 
     for (let index = 1; index <= config.idle.amount; index++) {
@@ -34,7 +34,7 @@ export default class Character extends AnimatedSprite {
     }
 
     this.loop = true;
-    this.width = 73;
+    this.width = this.innerWidth;
     this.height = 93;
 
     this.textures = this.texturesStay;
