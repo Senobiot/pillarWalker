@@ -8,11 +8,12 @@ import SelectScreen from '~/scenes/SelectScreen';
 
 export default async () => {
   let shakeFrames = 0;
-  const TOTAL_SHAKE_FRAMES = 120;
+  const TOTAL_SHAKE_FRAMES = 75;
   const { width, height } = getScreenSize();
   const appSize = {
     width: Math.min(width, 600),
     height: Math.min(height, 1000),
+    scaleFactor: Math.min(width, 600) / 600,
   };
 
   const app = new Application();
@@ -22,7 +23,7 @@ export default async () => {
   const bgTexture_2 = await Assets.load('/_08_clouds.png');
   const bgTexture_3 = await Assets.load('/_05_hill1.png');
   const bgTexture_4 = await Assets.load('/_02_trees and bushes.png');
-  await Assets.load('/pillar.png');
+  await Assets.load('/pillar2.png');
   await Assets.load('/brick.png');
   await Assets.load('/brick2.png');
 

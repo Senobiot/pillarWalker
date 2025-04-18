@@ -2,6 +2,7 @@ export type SizeProps = {
   width: number;
   height: number;
   borderRadius?: number;
+  scaleFactor?: number;
 };
 
 export type ButtonSizeProps = {

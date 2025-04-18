@@ -38,22 +38,31 @@ export default class PillarsFabric {
   bridgeOutFits: BridgeOutfits | undefined;
   triggerPlateSize: SizeProps = { width: 20, height: 5 };
   pillarsAmount: number = 0;
-  texture: Texture = Assets.get('/pillar.png');
+  texture: Texture = Assets.get('/pillar2.png');
+  appSize: SizeProps;
+  minWidth: number;
+  maxWidth: number;
+  minGap: number;
+  maxGap: number;
+  scaleFactor: number;
 
   constructor(appSize: SizeProps) {
     this.pillarY = appSize?.height - this.pillarHeight;
+    this.scaleFactor = appSize.scaleFactor || 1;
+    this.appSize = appSize;
+    this.minWidth = 80 * this.scaleFactor;
+    this.maxWidth = 120 * this.scaleFactor;
+    this.minGap = 80 * this.scaleFactor;
+    this.maxGap = this.appSize.width - 2 * this.maxWidth;
   }
 
   createPillar(): Sprite {
-    const minGap = 100;
-    const maxGap = 250;
     const randomGap =
-      minGap + Math.floor(Math.random() * (maxGap - minGap + 1));
+      this.minGap + Math.floor(Math.random() * (this.maxGap - this.minGap + 1));
 
-    const minWidth = 80;
-    const maxWidth = 150;
     const randomWidth =
-      minWidth + Math.floor(Math.random() * (maxWidth - minWidth + 1));
+      this.minWidth +
+      Math.floor(Math.random() * (this.maxWidth - this.minWidth + 1));
 
     const currentX = this.currMaxX ? this.currMaxX + randomGap : this.defaultX;
 

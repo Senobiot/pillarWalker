@@ -71,7 +71,7 @@ export default class Game extends Container {
   init = () => {
     this.state = GameState.MENU;
     const pillarPosition = this.addPillar();
-    this.character = new Character();
+    this.character = new Character(this.appSize);
     const startBounds = this.pillars[0].getBounds();
     this.character.x =
       startBounds.x + startBounds.width / 2 - this.character.width / 2;
@@ -89,7 +89,7 @@ export default class Game extends Container {
       this.removeChildren();
       this.pillar = new PillarsFabric(this.appSize);
       const pillarPosition = this.addPillar();
-      this.character = new Character();
+      this.character = new Character(this.appSize);
       this.characterFlip = false;
       this.character.x = pillarPosition.maxX - 32;
       this.character.y = pillarPosition.minY;

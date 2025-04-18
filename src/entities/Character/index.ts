@@ -1,5 +1,6 @@
 import { Assets, AnimatedSprite, Texture } from 'pixi.js';
 import { assetsConfig } from '~/config/';
+import { SizeProps } from '~/types';
 export enum CharacterState {
   STAY = 'stay',
   MOVING = 'moving',
@@ -12,11 +13,15 @@ export default class Character extends AnimatedSprite {
   speed: number = 3;
   texturesStay: Texture[] = [];
   texturesRun: Texture[] = [];
-  innerWidth: number = 70;
+  innerWidth: number;
+  scaleFactor: number;
+  innerHeight: number;
 
-  constructor() {
+  constructor(appSize: SizeProps) {
     super([Texture.EMPTY]);
-
+    this.scaleFactor = appSize.scaleFactor || 1;
+    this.innerWidth = 70 * this.scaleFactor;
+    this.innerHeight = 93 * this.scaleFactor;
     this.init();
   }
 
@@ -35,7 +40,7 @@ export default class Character extends AnimatedSprite {
 
     this.loop = true;
     this.width = this.innerWidth;
-    this.height = 93;
+    this.height = this.innerHeight;
 
     this.textures = this.texturesStay;
 

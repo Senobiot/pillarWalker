@@ -41,14 +41,15 @@ export default class UI extends Container {
 
     this.score = new Counter({
       initialText: 'Score: ',
-      position: { x: appSize.width / 2, y: 30 },
+      position: { x: appSize.width / 2, y: 60 },
     });
 
     this.collectablesScore = new Counter({
       initialText: 'Friuts: ',
       style: smallStyle,
-      position: { x: appSize.width / 2, y: 65 },
+      position: { x: appSize.width / 2, y: 100 },
     });
+
     this.gameOver = new GameOver(appSize);
   }
 

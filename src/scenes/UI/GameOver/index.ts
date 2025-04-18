@@ -13,7 +13,7 @@ export default class GameOver extends Container {
 
     this.position.set(
       appSize.width / 2 - this.width / 2,
-      appSize.height / 2 - this.height
+      appSize.height / 2 - this.height - 150
     );
 
     this.retryButton = new Button({
