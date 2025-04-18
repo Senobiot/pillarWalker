@@ -42,7 +42,12 @@ export default async () => {
     bgTexture_4,
   ]);
   const ui = new UI(appSize);
-  const game = new Game(appSize, app.stage);
+  const game = new Game(
+    appSize,
+    app.stage,
+    ui.score.increaseCounter,
+    ui.collectablesScore.increaseCounter
+  );
   const selectScreen = new SelectScreen(appSize);
 
   game.y = 100;
@@ -104,7 +109,7 @@ export default async () => {
           const speed = 5;
           game.x -= speed;
         } else {
-          ui.score.increaseScore();
+          ui.score.increaseCounter();
           game.character.state = CharacterState.STAY;
         }
       }

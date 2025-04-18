@@ -44,8 +44,15 @@ export default class Game extends Container {
   collectable: Sprite | null = null;
   private holdTimeoutId: ReturnType<typeof setTimeout> | null = null;
   applause: boolean = false;
+  increaseScore: CallableFunction;
+  increaseCollectables: CallableFunction;
 
-  constructor(appSize: AppSizeProps, appStage: Container) {
+  constructor(
+    appSize: AppSizeProps,
+    appStage: Container,
+    increaseScore: CallableFunction,
+    increaseCollectables: CallableFunction
+  ) {
     super();
     this.state = GameState.MENU;
     this.touchScreen;
@@ -56,6 +63,8 @@ export default class Game extends Container {
     this.isHolding = false;
     this.appStage = appStage;
     this.touchTimeoutId = null;
+    this.increaseScore = increaseScore;
+    this.increaseCollectables = increaseCollectables;
     this.init();
   }
 
@@ -130,7 +139,6 @@ export default class Game extends Container {
       }
       if (!this.character.playing) {
         this.character.play();
-        this.addCollectable(); // Переделать а то никогда не будет!!!!!!!!!!!
       }
 
       if (this.characterFlip) {
@@ -160,9 +168,6 @@ export default class Game extends Container {
           this.addChild(
             new FloatingText('+1', this.pillar.endOfbridge, this.pillar.pillarY)
           );
-          console.log(this.width);
-          console.log(this.pillar.endOfbridge);
-          console.log(Math.abs(this.x) + this.appSize.width / 2);
           this.addChild(
             new FloatingText(
               'PERFECT!!!',
@@ -170,6 +175,7 @@ export default class Game extends Container {
               this.height / 2
             )
           );
+          this.increaseScore();
         }
         if (
           this.character.x <
@@ -182,8 +188,9 @@ export default class Game extends Container {
           this.character.state = CharacterState.CROSSED;
           this.applause = false;
           this.character.changeAnimation();
-          // this.character.stop(); // animation
+
           this.addPillar();
+          this.addCollectable();
         }
       }
       if (this.pillar.bridgeOutFits === BridgeOutfits.LESSER) {

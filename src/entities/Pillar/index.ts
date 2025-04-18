@@ -29,7 +29,8 @@ export default class PillarsFabric {
   bridgePosition: number = 0;
   currMinX: number = 0;
   bridgeOutFits: BridgeOutfits | undefined;
-  triggerPlateSize: AppSizeProps = { width: 40, height: 5 };
+  triggerPlateSize: AppSizeProps = { width: 15, height: 5 };
+  pillarsAmount: number = 0;
 
   constructor(appSize: AppSizeProps) {
     this.pillarY = appSize?.height - this.pillarHeight;
@@ -60,6 +61,8 @@ export default class PillarsFabric {
 
     this.createTriggerPlate(pillar, currentX + randomWidth / 2, this.pillarY);
 
+    this.pillarsAmount++;
+
     return pillar;
   }
 
@@ -77,6 +80,8 @@ export default class PillarsFabric {
 
     button.x = x - this.triggerPlateSize.width / 2;
     button.y = y;
+
+    if (!this.pillarsAmount) return;
 
     parent.addChild(button);
   };

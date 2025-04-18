@@ -1,14 +1,15 @@
 import { Container } from 'pixi.js';
 import { AppSizeProps } from '../../app/App';
-import Score from './Score';
 import GameOver from './GameOver';
 
 import Button from '~/entities/Button';
 import { regularStyle, smallStyle } from '~/styles';
+import Counter from '~/entities/Counter';
 
 export default class UI extends Container {
   startButton: Button;
-  score: Score;
+  score: Counter;
+  collectablesScore: Counter;
   gameOver: GameOver;
   selectButton: Button;
 
@@ -28,13 +29,22 @@ export default class UI extends Container {
       textStyle: smallStyle,
       position: { x: appSize.width / 2, y: appSize.height / 2 },
     });
-    this.score = new Score(appSize);
+    this.score = new Counter({
+      initialText: 'Score: ',
+      position: { x: appSize.width / 2, y: 30 },
+    });
+    this.collectablesScore = new Counter({
+      initialText: 'Friuts: ',
+      style: smallStyle,
+      position: { x: appSize.width / 2, y: 65 },
+    });
     this.gameOver = new GameOver(appSize);
   }
 
   reset = () => {
     this.score.currentScore = 0;
-    this.score.setScore();
+    this.score.setCounter(0);
+    this.collectablesScore.setCounter(0);
   };
 
   showStartScreen = () => {
@@ -44,11 +54,16 @@ export default class UI extends Container {
 
   showScore = () => {
     this.addChild(this.score);
+    this.addChild(this.collectablesScore);
   };
 
   showGameOver = () => {
     this.removeChild(this.score);
-    this.gameOver.setScore(this.score.currentScore);
+    this.removeChild(this.collectablesScore);
+    this.gameOver.setScore(
+      this.score.currentScore,
+      this.collectablesScore.currentScore
+    );
     this.addChild(this.gameOver);
   };
 
