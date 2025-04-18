@@ -40,12 +40,13 @@ export default class Game extends Container {
   score: number = 0;
   initialX: number;
   collectableSize: SizeProps = { width: 32, height: 56 };
-  collectableChance: number = 0.3;
+  collectableChance: number = 0.5;
   collectable: Sprite | null = null;
   private holdTimeoutId: ReturnType<typeof setTimeout> | null = null;
   applause: boolean = false;
   increaseScore: CallableFunction;
   increaseCollectables: CallableFunction;
+  gotCollectable: boolean = false;
 
   constructor(
     appSize: AppSizeProps,
@@ -94,6 +95,7 @@ export default class Game extends Container {
       this.characterFlip = false;
       this.character.x = pillarPosition.maxX - 32;
       this.character.y = pillarPosition.minY;
+      this.gotCollectable = false;
 
       this.addChild(this.character);
     }
@@ -146,6 +148,7 @@ export default class Game extends Container {
           const gotCollectable = this.checkCollision(this.collectable.x);
           if (gotCollectable) {
             this.removeCollectable();
+            this.gotCollectable = true;
             console.log('got coolectable');
           }
         }
@@ -184,6 +187,11 @@ export default class Game extends Container {
           return this.character.move(deltaTime);
         } else {
           this.removeCollectable();
+
+          if (this.gotCollectable) {
+            this.gotCollectable = false;
+            this.increaseCollectables();
+          }
           this.pillar.bridgeState = BridgeState.CROSSED;
           this.character.state = CharacterState.CROSSED;
           this.applause = false;

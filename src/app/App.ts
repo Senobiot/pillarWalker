@@ -85,7 +85,7 @@ export default async () => {
     selectScreen.visible = false;
   });
 
-  ui.gameOver.retryButton.onRetry(() => {
+  ui.gameOver.retryButton.onClick(() => {
     game.x = 0;
     ui.reset();
     ui.showScore();
