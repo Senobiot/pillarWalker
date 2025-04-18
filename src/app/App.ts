@@ -11,8 +11,8 @@ export default async () => {
   const TOTAL_SHAKE_FRAMES = 120;
   const { width, height } = getScreenSize();
   const appSize = {
-    width: Math.min(width, 500),
-    height: Math.min(height, 800),
+    width: Math.min(width, 600),
+    height: Math.min(height, 1000),
   };
 
   const app = new Application();
