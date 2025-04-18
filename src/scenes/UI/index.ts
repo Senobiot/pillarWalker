@@ -1,10 +1,10 @@
-import { Container } from 'pixi.js';
-import { AppSizeProps } from '../../app/App';
+import { Container, Text } from 'pixi.js';
 import GameOver from './GameOver';
 
 import Button from '~/entities/Button';
-import { regularStyle, smallStyle } from '~/styles';
+import { regularStyle, skewStyle, smallStyle } from '~/styles';
 import Counter from '~/entities/Counter';
+import { SizeProps } from '~/types';
 
 export default class UI extends Container {
   startButton: Button;
@@ -12,9 +12,18 @@ export default class UI extends Container {
   collectablesScore: Counter;
   gameOver: GameOver;
   selectButton: Button;
+  title: Text = new Text();
 
-  constructor(appSize: AppSizeProps) {
+  constructor(appSize: SizeProps) {
     super();
+
+    this.title = new Text({
+      text: 'PILLAR WALKER',
+      style: skewStyle,
+    });
+
+    this.title.x = appSize.width / 2 - this.title.width / 2;
+    this.title.y = 25;
     this.startButton = new Button({
       size: { circleRadius: 80 },
       text: 'START',
@@ -29,10 +38,12 @@ export default class UI extends Container {
       textStyle: smallStyle,
       position: { x: appSize.width / 2, y: appSize.height / 2 },
     });
+
     this.score = new Counter({
       initialText: 'Score: ',
       position: { x: appSize.width / 2, y: 30 },
     });
+
     this.collectablesScore = new Counter({
       initialText: 'Friuts: ',
       style: smallStyle,
@@ -50,6 +61,7 @@ export default class UI extends Container {
   showStartScreen = () => {
     this.addChild(this.startButton);
     this.addChild(this.selectButton);
+    this.addChild(this.title);
   };
 
   showScore = () => {
@@ -70,6 +82,7 @@ export default class UI extends Container {
   hideStartScreen = () => {
     this.removeChild(this.startButton);
     this.removeChild(this.selectButton);
+    this.removeChild(this.title);
   };
 
   hideGameOverScreen = () => {

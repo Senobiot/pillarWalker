@@ -6,7 +6,6 @@ import {
   Texture,
   TilingSprite,
 } from 'pixi.js';
-import { AppSizeProps } from '~/app/App';
 import { SizeProps } from '~/types';
 
 export enum BridgeState {
@@ -41,18 +40,17 @@ export default class PillarsFabric {
   pillarsAmount: number = 0;
   texture: Texture = Assets.get('/pillar.png');
 
-  constructor(appSize: AppSizeProps) {
+  constructor(appSize: SizeProps) {
     this.pillarY = appSize?.height - this.pillarHeight;
   }
 
   createPillar(): Sprite {
-    console.log('add pillar');
     const minGap = 100;
     const maxGap = 250;
     const randomGap =
       minGap + Math.floor(Math.random() * (maxGap - minGap + 1));
 
-    const minWidth = 50;
+    const minWidth = 80;
     const maxWidth = 150;
     const randomWidth =
       minWidth + Math.floor(Math.random() * (maxWidth - minWidth + 1));
@@ -80,8 +78,7 @@ export default class PillarsFabric {
   createTriggerPlate = (parent: Sprite, width: number) => {
     const button = new Graphics();
 
-    const scale = width / parent.texture.width; // когда растягиваются тектура - растягиваются всё у children - даже x позиция
-    button.fill('rgb(47 39 32)');
+    const scale = width / parent.texture.width;
     button.roundRect(
       0,
       0,
@@ -123,7 +120,7 @@ export default class PillarsFabric {
   growBridge(delta: number) {
     if (this.bridge) {
       const bridgeSprite = this.bridge.getChildAt(0) as TilingSprite;
-      bridgeSprite.height -= delta * 300;
+      bridgeSprite.height -= delta * 500;
     }
   }
 

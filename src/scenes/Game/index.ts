@@ -1,5 +1,4 @@
 import { Container, Sprite, Texture } from 'pixi.js';
-import { AppSizeProps } from '~/app/App';
 import PillarsFabric, { BridgeOutfits, BridgeState } from '~/entities/Pillar';
 import Character, { CharacterState } from '~/entities/Character';
 import Collectable from '~/entities/Collectable';
@@ -24,7 +23,7 @@ enum TouchScren {
 export default class Game extends Container {
   state: GameState;
   touchScreen: TouchScren | undefined;
-  appSize: AppSizeProps;
+  appSize: SizeProps;
   pillar: PillarsFabric;
   isHolding: boolean;
   holdStartTime: number = 0;
@@ -49,7 +48,7 @@ export default class Game extends Container {
   gotCollectable: boolean = false;
 
   constructor(
-    appSize: AppSizeProps,
+    appSize: SizeProps,
     appStage: Container,
     increaseScore: CallableFunction,
     increaseCollectables: CallableFunction
@@ -82,7 +81,6 @@ export default class Game extends Container {
 
   start = (restart: boolean = false) => {
     if (restart) {
-      console.log(`restart ${restart}`);
       this.pillars.forEach((e) => e.destroy);
       this.pillars = [];
       this.children.forEach((child) => {

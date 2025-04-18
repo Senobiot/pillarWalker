@@ -1,14 +1,14 @@
 import { Text, Container } from 'pixi.js';
-import { AppSizeProps } from '../../../app/App';
 
-import { italianoStyle } from '../../../styles';
+import { italianoStyle } from '~/styles';
 import Button from '~/entities/Button';
+import { SizeProps } from '~/types';
 
 export default class GameOver extends Container {
   retryButton: Button;
   text: Text;
 
-  constructor(appSize: AppSizeProps) {
+  constructor(appSize: SizeProps) {
     super();
 
     this.position.set(

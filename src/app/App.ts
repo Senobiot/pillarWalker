@@ -6,12 +6,9 @@ import Background from '../scenes/Background';
 import { CharacterState } from '../entities/Character';
 import SelectScreen from '~/scenes/SelectScreen';
 
-export type AppSizeProps = {
-  width: number;
-  height: number;
-};
-
 export default async () => {
+  let shakeFrames = 0;
+  const TOTAL_SHAKE_FRAMES = 120;
   const { width, height } = getScreenSize();
   const appSize = {
     width: Math.min(width, 500),
@@ -20,15 +17,6 @@ export default async () => {
 
   const app = new Application();
   await app.init(appSize);
-
-  const scaleFactor = Math.min(
-    window.innerWidth / appSize.width,
-    window.innerHeight / appSize.height
-  );
-
-  console.log('AppSize:', appSize);
-  console.log('Scale Factor:', scaleFactor);
-  console.log('Renderer Size:', app.renderer.width, app.renderer.height);
 
   const bgTexture_1 = await Assets.load('/_11_background.png');
   const bgTexture_2 = await Assets.load('/_08_clouds.png');
@@ -90,6 +78,8 @@ export default async () => {
 
   ui.gameOver.retryButton.onClick(() => {
     game.x = 0;
+    bg.x = 0;
+    game.y = 0;
     ui.reset();
     ui.showScore();
     ui.hideGameOverScreen();
@@ -98,6 +88,7 @@ export default async () => {
   });
 
   app.ticker.add((ticker) => {
+    bg.animateClouds(ticker.deltaTime);
     if (game.state === GameState.ACTIVE) {
       game.update(ticker.deltaTime);
 
@@ -119,8 +110,18 @@ export default async () => {
     }
 
     if (game.state === GameState.OVER) {
-      ui.showGameOver();
-      app.ticker.stop();
+      if (shakeFrames < TOTAL_SHAKE_FRAMES) {
+        if (shakeFrames % 2 === 0) {
+          game.x += Math.random() * 10 - 5;
+          game.y += Math.random();
+          bg.x = Math.random() * 10 - 5;
+        }
+        shakeFrames++;
+      } else {
+        ui.showGameOver();
+        app.ticker.stop();
+        shakeFrames = 0;
+      }
     }
 
     if (game.state === GameState.STARTING) {

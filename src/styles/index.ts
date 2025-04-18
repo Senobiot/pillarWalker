@@ -47,7 +47,7 @@ export const skewStyle = new TextStyle({
   },
   fill: '#ffffff',
   stroke: { color: '#004620', width: 12, join: 'round' },
-  fontSize: 36,
+  fontSize: 48,
   fontWeight: 'lighter',
 });
 

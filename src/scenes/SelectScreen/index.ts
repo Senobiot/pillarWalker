@@ -70,8 +70,6 @@ export default class SelectScreen extends Container {
     this.character.animationSpeed = 0.15;
     this.character.loop = true;
     this.character.scale.set(2);
-    // this.character.width = 100;
-    // this.character.height = 120;
     this.character.x = this.appSize.width / 2 - this.character.width / 2;
     this.character.y = this.appSize.height / 2 - this.character.height / 2;
 
@@ -107,7 +105,7 @@ export default class SelectScreen extends Container {
         this.characterIndex === this.charactersAmount
           ? (this.characterIndex = 0)
           : ++this.characterIndex;
-      console.log(this.characterIndex);
+
       this.initCharacter();
     });
 

@@ -31,4 +31,8 @@ export default class Background extends Container {
       sprite.tilePosition.x -= speed * delta;
     });
   }
+
+  animateClouds(delta: number) {
+    this.layers[1].sprite.tilePosition.x -= 3 * delta;
+  }
 }
