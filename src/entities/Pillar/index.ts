@@ -1,6 +1,5 @@
 import { Graphics } from 'pixi.js';
 import { AppSizeProps } from '../../app/App';
-import FloatingText from '../Popup';
 
 export enum BridgeState {
   ROTATING = 'rotating',
@@ -30,7 +29,7 @@ export default class PillarsFabric {
   bridgePosition: number = 0;
   currMinX: number = 0;
   bridgeOutFits: BridgeOutfits | undefined;
-  triggerPlateSize: AppSizeProps = { width: 10, height: 5 };
+  triggerPlateSize: AppSizeProps = { width: 40, height: 5 };
 
   constructor(appSize: AppSizeProps) {
     this.pillarY = appSize?.height - this.pillarHeight;
@@ -134,9 +133,6 @@ export default class PillarsFabric {
               this.currCneter - this.triggerPlateSize.width / 2 &&
             this.endOfbridge < this.currCneter + this.triggerPlateSize.width / 2
           ) {
-            this.bridge.parent.addChild(
-              new FloatingText('+1', this.endOfbridge, this.pillarY)
-            );
             return (this.bridgeOutFits = BridgeOutfits.EXACT);
           }
 

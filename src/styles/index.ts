@@ -53,8 +53,9 @@ export const skewStyle = new TextStyle({
 
 export const lightBlueStyle = {
   fontFamily: 'Arial',
-  fontSize: 24,
+  fontSize: 28,
   fill: '#53BECF',
+  stroke: { color: 'rgb(50, 55, 56)', width: 4 },
 };
 
 export const COLORS = {

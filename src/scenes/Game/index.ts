@@ -5,6 +5,7 @@ import Character, { CharacterState } from '~/entities/Character';
 import Collectable from '~/entities/Collectable';
 import { getChance, getRandInBounds } from '~/utils';
 import { SizeProps } from '~/types';
+import FloatingText from '~/entities/Popup';
 
 export enum GameState {
   ACTIVE = 'active',
@@ -42,6 +43,7 @@ export default class Game extends Container {
   collectableChance: number = 0.3;
   collectable: Sprite | null = null;
   private holdTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  applause: boolean = false;
 
   constructor(appSize: AppSizeProps, appStage: Container) {
     super();
@@ -94,8 +96,9 @@ export default class Game extends Container {
     this.addListeners();
   };
 
-  setCharacter = (textures: Texture[]) => {
+  setCharacter = (textures: Texture[], texturesRun: Texture[]) => {
     if (this.character) {
+      this.character.texturesRun = texturesRun;
       this.character.texturesStay = textures;
       this.character.textures = textures;
       this.character.play();
@@ -149,6 +152,26 @@ export default class Game extends Container {
         this.pillar.bridgeOutFits === BridgeOutfits.NEAR
       ) {
         if (
+          !this.applause &&
+          this.pillar.bridgeOutFits === BridgeOutfits.EXACT
+        ) {
+          this.applause = true;
+
+          this.addChild(
+            new FloatingText('+1', this.pillar.endOfbridge, this.pillar.pillarY)
+          );
+          console.log(this.width);
+          console.log(this.pillar.endOfbridge);
+          console.log(Math.abs(this.x) + this.appSize.width / 2);
+          this.addChild(
+            new FloatingText(
+              'PERFECT!!!',
+              this.appSize.width / 2 - this.x,
+              this.height / 2
+            )
+          );
+        }
+        if (
           this.character.x <
           this.pillar.currMaxX - this.character.width / 1.5
         ) {
@@ -157,6 +180,7 @@ export default class Game extends Container {
           this.removeCollectable();
           this.pillar.bridgeState = BridgeState.CROSSED;
           this.character.state = CharacterState.CROSSED;
+          this.applause = false;
           this.character.changeAnimation();
           // this.character.stop(); // animation
           this.addPillar();

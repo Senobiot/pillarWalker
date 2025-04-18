@@ -15,6 +15,7 @@ export default class SelectScreen extends Container {
   charactersAmount: number;
   confirmButton: Button;
   textures: Texture[] = [Texture.EMPTY];
+  texturesRun: Texture[] = [Texture.EMPTY];
 
   constructor(appSize: SizeProps) {
     super();
@@ -46,12 +47,18 @@ export default class SelectScreen extends Container {
 
   async initCharacter() {
     this.textures = [];
+    this.texturesRun = [];
 
     const config = this.charactersConfig[this.characterIndex];
 
     for (let index = 1; index <= config.idle.amount; index++) {
       const asset = await Assets.load(`${config.idle.url}${index}.png`);
       this.textures.push(new Texture({ source: asset.source }));
+    }
+
+    for (let index = 1; index <= config.run.amount; index++) {
+      const asset = await Assets.load(`${config.run.url}${index}.png`);
+      this.texturesRun.push(new Texture({ source: asset.source }));
     }
 
     if (this.character) {

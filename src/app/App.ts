@@ -75,7 +75,7 @@ export default async () => {
   });
 
   selectScreen.confirmButton.onClick(() => {
-    game.setCharacter(selectScreen.textures);
+    game.setCharacter(selectScreen.textures, selectScreen.texturesRun);
     ui.showStartScreen();
     selectScreen.visible = false;
   });
