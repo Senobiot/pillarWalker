@@ -34,6 +34,9 @@ export default async () => {
   const bgTexture_2 = await Assets.load('/_08_clouds.png');
   const bgTexture_3 = await Assets.load('/_05_hill1.png');
   const bgTexture_4 = await Assets.load('/_02_trees and bushes.png');
+  await Assets.load('/pillar.png');
+  await Assets.load('/brick.png');
+  await Assets.load('/brick2.png');
 
   const bg = new Background(appSize, [
     bgTexture_1,

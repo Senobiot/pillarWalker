@@ -1,4 +1,4 @@
-import { Container, Graphics, Sprite, Texture } from 'pixi.js';
+import { Container, Sprite, Texture } from 'pixi.js';
 import { AppSizeProps } from '~/app/App';
 import PillarsFabric, { BridgeOutfits, BridgeState } from '~/entities/Pillar';
 import Character, { CharacterState } from '~/entities/Character';
@@ -29,8 +29,8 @@ export default class Game extends Container {
   isHolding: boolean;
   holdStartTime: number = 0;
   minHoldTime: number = 200;
-  pillars: Graphics[];
-  bridge: Graphics = new Graphics();
+  pillars: Sprite[];
+  bridge: Container | undefined;
   appStage: any;
   character: Character | undefined;
   characterGap: number = 50;

@@ -56,6 +56,7 @@ export default class Character extends AnimatedSprite {
 
   flip = () => {
     this.scale.y = -this.scale.y;
+    this.y += this.scale.y < 0 ? 10 : -10;
   };
 
   changeAnimation() {

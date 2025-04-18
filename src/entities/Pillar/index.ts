@@ -1,5 +1,13 @@
-import { Graphics } from 'pixi.js';
-import { AppSizeProps } from '../../app/App';
+import {
+  Assets,
+  Container,
+  Graphics,
+  Sprite,
+  Texture,
+  TilingSprite,
+} from 'pixi.js';
+import { AppSizeProps } from '~/app/App';
+import { SizeProps } from '~/types';
 
 export enum BridgeState {
   ROTATING = 'rotating',
@@ -24,19 +32,21 @@ export default class PillarsFabric {
   pillarY: number = 300;
   pillarHeight: number = 170;
   currMaxX: number = 0;
-  bridge: Graphics | null = null;
+  bridge: Container | null = null;
   endOfbridge: number = 0;
   bridgePosition: number = 0;
   currMinX: number = 0;
   bridgeOutFits: BridgeOutfits | undefined;
-  triggerPlateSize: AppSizeProps = { width: 15, height: 5 };
+  triggerPlateSize: SizeProps = { width: 20, height: 5 };
   pillarsAmount: number = 0;
+  texture: Texture = Assets.get('/pillar.png');
 
   constructor(appSize: AppSizeProps) {
     this.pillarY = appSize?.height - this.pillarHeight;
   }
 
-  createPillar(): Graphics {
+  createPillar(): Sprite {
+    console.log('add pillar');
     const minGap = 100;
     const maxGap = 250;
     const randomGap =
@@ -49,39 +59,43 @@ export default class PillarsFabric {
 
     const currentX = this.currMaxX ? this.currMaxX + randomGap : this.defaultX;
 
-    const pillar = new Graphics();
-    pillar.fill(0x000000);
-    pillar.rect(currentX, this.pillarY, randomWidth, this.pillarHeight);
-    pillar.fill();
+    const pillar = new Sprite(new Texture(this.texture));
+    pillar.x = currentX;
+    pillar.y = this.pillarY;
+    pillar.width = randomWidth;
+    pillar.height = this.pillarHeight;
 
     this.bridgePosition = this.currMaxX;
     this.bridgeState = BridgeState.CREATING;
     this.currMaxX = currentX + randomWidth;
     this.currMinX = currentX;
 
-    this.createTriggerPlate(pillar, currentX + randomWidth / 2, this.pillarY);
+    this.createTriggerPlate(pillar, randomWidth);
 
     this.pillarsAmount++;
 
     return pillar;
   }
 
-  createTriggerPlate = (parent: Graphics, x: number, y: number) => {
+  createTriggerPlate = (parent: Sprite, width: number) => {
     const button = new Graphics();
 
-    button.fill(0xff0000);
-    button.rect(
+    const scale = width / parent.texture.width; // когда растягиваются тектура - растягиваются всё у children - даже x позиция
+    button.fill('rgb(47 39 32)');
+    button.roundRect(
       0,
       0,
-      this.triggerPlateSize.width,
-      this.triggerPlateSize.height
+      this.triggerPlateSize.width / scale,
+      this.triggerPlateSize.height,
+      4
     );
     button.fill();
 
-    button.x = x - this.triggerPlateSize.width / 2;
-    button.y = y;
-
     if (!this.pillarsAmount) return;
+
+    button.x = width / 2 / scale - this.triggerPlateSize.width / 2 / scale;
+
+    button.y = -this.triggerPlateSize.height / 4;
 
     parent.addChild(button);
   };
@@ -89,24 +103,27 @@ export default class PillarsFabric {
   createBridge(
     x: number = this.bridgePosition,
     y: number = this.pillarY
-  ): Graphics {
-    this.bridge = new Graphics();
-    const width = 5;
+  ): Container {
+    this.bridge = new Container();
+    const width = 10;
     const initialHeight = 1;
 
-    this.bridge.fill(0x000000);
-    this.bridge.rect(0, 0, width, initialHeight);
-    this.bridge.fill();
+    const bridgeSprite = new TilingSprite({
+      texture: Assets.get('/brick2.png'),
+      width: width,
+      height: initialHeight,
+    });
 
+    this.bridge.addChild(bridgeSprite);
     this.bridge.x = x - width;
     this.bridge.y = y;
-
     return this.bridge;
   }
 
   growBridge(delta: number) {
     if (this.bridge) {
-      this.bridge.scale.y -= delta * 300;
+      const bridgeSprite = this.bridge.getChildAt(0) as TilingSprite;
+      bridgeSprite.height -= delta * 300;
     }
   }
 
