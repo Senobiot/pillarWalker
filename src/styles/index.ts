@@ -18,8 +18,12 @@ export const regularStyle = new TextStyle({
   fontSize: 40,
   fontWeight: 'bold',
   fill: '#ffffff',
-  stroke: '#4a1850',
-  dropShadow: true,
+  stroke: { color: 'rgba(147 126 104)', width: 8, join: 'round' },
+  dropShadow: {
+    alpha: 0.8,
+    blur: 4,
+    color: 'rgba(147 126 104)',
+  },
   align: 'center',
 });
 

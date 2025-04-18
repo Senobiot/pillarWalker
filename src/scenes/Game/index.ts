@@ -1,4 +1,4 @@
-import { Container, Graphics, Sprite } from 'pixi.js';
+import { Container, Graphics, Sprite, Texture } from 'pixi.js';
 import { AppSizeProps } from '~/app/App';
 import PillarsFabric, { BridgeOutfits, BridgeState } from '~/entities/Pillar';
 import Character, { CharacterState } from '~/entities/Character';
@@ -92,6 +92,15 @@ export default class Game extends Container {
 
     this.state = GameState.ACTIVE;
     this.addListeners();
+  };
+
+  setCharacter = (textures: Texture[]) => {
+    if (this.character) {
+      this.character.texturesStay = textures;
+      this.character.textures = textures;
+      this.character.play();
+      console.log('set new character');
+    }
   };
 
   update = (deltaTime: number) => {

@@ -1,22 +1,35 @@
 import { Container } from 'pixi.js';
-import StartButton from './StartButton';
 import { AppSizeProps } from '../../app/App';
 import Score from './Score';
 import GameOver from './GameOver';
-import SelectButton from './SelectButton';
+
+import Button from '~/entities/Button';
+import { regularStyle, smallStyle } from '~/styles';
 
 export default class UI extends Container {
-  startButton: StartButton;
+  startButton: Button;
   score: Score;
   gameOver: GameOver;
-  selectButton: SelectButton;
+  selectButton: Button;
 
   constructor(appSize: AppSizeProps) {
     super();
-    this.startButton = new StartButton(appSize);
+    this.startButton = new Button({
+      size: { circleRadius: 80 },
+      text: 'START',
+      textStyle: regularStyle,
+      variant: 'circle',
+      position: { x: appSize.width / 2 + 80, y: appSize.height / 2 - 80 },
+    });
+
+    this.selectButton = new Button({
+      size: { width: 200, height: 60 },
+      text: 'Select character',
+      textStyle: smallStyle,
+      position: { x: appSize.width / 2, y: appSize.height / 2 },
+    });
     this.score = new Score(appSize);
     this.gameOver = new GameOver(appSize);
-    this.selectButton = new SelectButton(appSize);
   }
 
   reset = () => {

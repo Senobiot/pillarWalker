@@ -1,7 +1,8 @@
 import { Assets, AnimatedSprite, Texture, Container, Graphics } from 'pixi.js';
-import { COLORS } from '~/styles';
+import { COLORS, smallStyle } from '~/styles';
 import { SizeProps } from '~/types';
 import { assetsConfig } from '~/config/';
+import Button from '~/entities/Button';
 
 export default class SelectScreen extends Container {
   animationSpeed: number = 3;
@@ -12,38 +13,45 @@ export default class SelectScreen extends Container {
   charactersConfig: any;
   characterIndex: number;
   charactersAmount: number;
+  confirmButton: Button;
+  textures: Texture[] = [Texture.EMPTY];
 
   constructor(appSize: SizeProps) {
     super();
+    const { width, height } = appSize;
+
     this.charactersConfig = assetsConfig.characters;
     this.charactersAmount = this.charactersConfig.length - 1;
     this.characterIndex = 0;
     this.appSize = appSize;
-    this.rightArrow = this.drawArrow(
-      appSize.width / 2 + 130,
-      appSize.height / 2
-    );
-    this.leftArrow = this.drawArrow(
-      appSize.width / 2 - 130,
-      appSize.height / 2,
-      true
-    );
+    this.rightArrow = this.drawArrow(width / 2 + 130, height / 2);
+    this.leftArrow = this.drawArrow(width / 2 - 130, height / 2, true);
+
+    this.confirmButton = new Button({
+      size: { width: 140, height: 40 },
+      variant: 'roundRect',
+      text: 'CONFIRM',
+      textStyle: smallStyle,
+      position: { x: width / 2, y: height / 2 + 125 },
+    });
 
     this.addChild(this.drawBackGround());
     this.addChild(this.leftArrow);
     this.addChild(this.rightArrow);
+    this.addChild(this.confirmButton);
+
     this.initCharacter();
     this.visible = false;
   }
 
   async initCharacter() {
-    const textures = [];
+    this.textures = [];
 
     const config = this.charactersConfig[this.characterIndex];
 
     for (let index = 1; index <= config.idle.amount; index++) {
       const asset = await Assets.load(`${config.idle.url}${index}.png`);
-      textures.push(new Texture({ source: asset.source }));
+      this.textures.push(new Texture({ source: asset.source }));
     }
 
     if (this.character) {
@@ -51,7 +59,7 @@ export default class SelectScreen extends Container {
       this.character.destroy();
     }
 
-    this.character = new AnimatedSprite(textures);
+    this.character = new AnimatedSprite(this.textures);
     this.character.animationSpeed = 0.15;
     this.character.loop = true;
     this.character.width = 100;

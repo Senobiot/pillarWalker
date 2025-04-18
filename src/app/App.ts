@@ -63,15 +63,21 @@ export default async () => {
   app.stage.addChild(ui);
   app.stage.addChild(selectScreen);
 
-  ui.startButton.onStart(() => {
+  ui.startButton.onClick(() => {
     ui.hideStartScreen();
     ui.showScore();
     game.state = GameState.STARTING;
   });
 
-  ui.selectButton.onStart(() => {
+  ui.selectButton.onClick(() => {
     ui.hideStartScreen();
     selectScreen.visible = true;
+  });
+
+  selectScreen.confirmButton.onClick(() => {
+    game.setCharacter(selectScreen.textures);
+    ui.showStartScreen();
+    selectScreen.visible = false;
   });
 
   ui.gameOver.retryButton.onRetry(() => {
