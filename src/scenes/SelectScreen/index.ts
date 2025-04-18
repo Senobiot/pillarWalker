@@ -1,19 +1,24 @@
 import { Assets, AnimatedSprite, Texture, Container, Graphics } from 'pixi.js';
 import { COLORS } from '~/styles';
 import { SizeProps } from '~/types';
+import { assetsConfig } from '~/config/';
 
 export default class SelectScreen extends Container {
   animationSpeed: number = 3;
   character: AnimatedSprite = new AnimatedSprite([Texture.EMPTY]);
   appSize: SizeProps;
-  background: Graphics;
   rightArrow: Graphics;
   leftArrow: Graphics;
+  charactersConfig: any;
+  characterIndex: number;
+  charactersAmount: number;
 
   constructor(appSize: SizeProps) {
     super();
+    this.charactersConfig = assetsConfig.characters;
+    this.charactersAmount = this.charactersConfig.length - 1;
+    this.characterIndex = 0;
     this.appSize = appSize;
-    this.init();
     this.rightArrow = this.drawArrow(
       appSize.width / 2 + 130,
       appSize.height / 2
@@ -23,15 +28,21 @@ export default class SelectScreen extends Container {
       appSize.height / 2,
       true
     );
-    this.background = this.drawBackGround();
+
+    this.addChild(this.drawBackGround());
+    this.addChild(this.leftArrow);
+    this.addChild(this.rightArrow);
+    this.initCharacter();
+    this.visible = false;
   }
 
-  async init() {
+  async initCharacter() {
     const textures = [];
 
-    for (let index = 1; index <= 6; index++) {
-      console.log(`Idle/${index}.png`);
-      const asset = await Assets.load(`chars/2/idle/${index}.png`);
+    const config = this.charactersConfig[this.characterIndex];
+
+    for (let index = 1; index <= config.idle.amount; index++) {
+      const asset = await Assets.load(`${config.idle.url}${index}.png`);
       textures.push(new Texture({ source: asset.source }));
     }
 
@@ -49,17 +60,8 @@ export default class SelectScreen extends Container {
     this.character.y = this.appSize.height / 2 - this.character.height / 2;
 
     this.character.play();
-  }
-  show = () => {
-    this.addChild(this.background);
     this.addChild(this.character);
-    this.addChild(this.leftArrow);
-    this.addChild(this.rightArrow);
-  };
-
-  hide = () => {
-    this.removeChild(this.character);
-  };
+  }
 
   drawArrow = (x: number, y: number, rotated?: boolean) => {
     const arrow = new Graphics();
@@ -76,6 +78,22 @@ export default class SelectScreen extends Container {
     arrow.scale.set(2);
     arrow.interactive = true;
     arrow.cursor = 'pointer';
+
+    arrow.on('pointerdown', () => {
+      if (rotated) {
+        this.characterIndex < 1
+          ? (this.characterIndex = this.charactersAmount)
+          : --this.characterIndex;
+        return this.initCharacter();
+      }
+
+      this.characterIndex =
+        this.characterIndex === this.charactersAmount
+          ? (this.characterIndex = 0)
+          : ++this.characterIndex;
+      console.log(this.characterIndex);
+      this.initCharacter();
+    });
 
     if (rotated) {
       arrow.scale.x = -Math.abs(arrow.scale.x);

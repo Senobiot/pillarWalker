@@ -114,10 +114,11 @@ export default class Game extends Container {
     ) {
       if (this.character.state !== CharacterState.MOVING) {
         this.character.state = CharacterState.MOVING;
+        this.character.changeAnimation();
       }
       if (!this.character.playing) {
         this.character.play();
-        this.addCollectable();
+        this.addCollectable(); // Переделать а то никогда не будет!!!!!!!!!!!
       }
 
       if (this.characterFlip) {
@@ -147,7 +148,8 @@ export default class Game extends Container {
           this.removeCollectable();
           this.pillar.bridgeState = BridgeState.CROSSED;
           this.character.state = CharacterState.CROSSED;
-          this.character.stop(); // animation
+          this.character.changeAnimation();
+          // this.character.stop(); // animation
           this.addPillar();
         }
       }

@@ -20,10 +20,12 @@ export default async () => {
 
   const app = new Application();
   await app.init(appSize);
+
   const scaleFactor = Math.min(
     window.innerWidth / appSize.width,
     window.innerHeight / appSize.height
   );
+
   console.log('AppSize:', appSize);
   console.log('Scale Factor:', scaleFactor);
   console.log('Renderer Size:', app.renderer.width, app.renderer.height);
@@ -69,7 +71,7 @@ export default async () => {
 
   ui.selectButton.onStart(() => {
     ui.hideStartScreen();
-    selectScreen.show();
+    selectScreen.visible = true;
   });
 
   ui.gameOver.retryButton.onRetry(() => {
